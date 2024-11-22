@@ -1,0 +1,19 @@
+{
+  "name": "club_system",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xiangxiang99141/113_DataBaseSystem_project_Club_system.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xiangxiang99141/113_DataBaseSystem_project_Club_system/issues"
+  },
+  "homepage": "https://github.com/Xiangxiang99141/113_DataBaseSystem_project_Club_system#readme",
+  "description": ""
+}
