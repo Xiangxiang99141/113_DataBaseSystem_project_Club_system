@@ -10,7 +10,7 @@
     ├─node_modules
     ├─routes
     ├─util
-    └─views0
+    └─views
     ```
   2.
 + 使用套件
