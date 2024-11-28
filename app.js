@@ -1,19 +1,23 @@
 const express = require('express');
 const ejs = require('ejs'); /*導入ejs*/
+// const bodyParser = require('body-parser'); // 導入Body-Parser
 const app = express();
+
+//Routes
+const indexRouter = require('./routes/indexRouter')
 
 /*設定 view engine 為 ejs*/
 app.set('view engine', 'ejs');
 
-app.get('/',(req,res)=>{
-    /*渲染畫面  並將後面參數傳置檔案*/
-    res.render('index', {
-        game: 'Final Fantasy VII',
-        category: '<p><b>Characters:</b></p>',
-        characters: ['Cloud', 'Aerith', 'Tifa', 'Barret']
-    });
-});
+//解析JSON跟URL編碼，需在路由前設定
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
+//設定路由
+app.use('/',indexRouter);
+
+//製作API路由
+// app.use('/api');
 
 app.listen('3000',()=>{
     console.log(">> Server is Start on 3000 <<")
