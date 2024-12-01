@@ -5,6 +5,16 @@ class IndexModel{
         this.clubs = [
             {
                 name:'吉他社',
+                intro:'音樂愛好者的交流天地',
+                web:'#',
+                amount:50,
+                id:uuidv4()
+            },
+            {
+                name:'攝影社',
+                intro:'攝影愛好者的交流平台',
+                web:'#',
+                amount:30,
                 id:uuidv4()
             }
         ];
