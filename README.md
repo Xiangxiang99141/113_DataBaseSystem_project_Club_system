@@ -6,11 +6,15 @@
     ```
     ├─config
     ├─controllers
+      ├─indexController.js
     ├─models
+      ├─indexModel
     ├─node_modules
     ├─routes
     ├─util
-    └─views
+    ├─views
+      ├─index.ejs
+    └─app.js
     ```
   2.
 + 使用套件

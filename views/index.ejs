@@ -1,18 +1,47 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>簡單實作 EJS</title>
-    </head>
-    <body> 
-        <!-- <%= %> 把數出過來的參數當成值使用 -->
-        <h1><%= game %></h1>
-        <!-- <%- %> 把數出過來的參數當成 HTML 語法使用 -->
-        <%- category %>
-        <ul>
-            <!-- <% %> 程式邏輯使用 -->
-            <% for(var i=0; i<characters.length; i++) { %>
-            <li><%= characters[i] %></li> <% } %>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社團管理系統</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="styles/styles.css"> -->
+</head>
+
+<body>
+    <div class="container">
+        <!-- 首頁：顯示註冊和登入按鈕 -->
+        <ul class="nav">
+            <h1>社團管理系統</h1>
+            <li class="nav-item">
+                <a class="nav-link active" href="sign_up.html" aria-label="註冊">註冊</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="sign_in.html" aria-label="登入">登入</a>
+            </li>
         </ul>
-    </body>
+        <section id="welcomePage" class="active">
+            <header>
+            </header>
+            <!-- 社團列表 -->
+            <h2>社團列表</h2>
+            <ul id="clubList">
+                <!-- ejs 語法將controller傳過來的資料用for迴圈印出來 -->
+                <% for(var i=0;i<clubs.length; i++) {%>
+                    <li>
+                        <h3><%= clubs[i].name  %></h3>
+                        <p>社團介紹：<%= clubs[i].intro %></p>
+                        <p>社團網址：<a href="<%= clubs[i].web %>" aria-label="">點此進入</a></p>
+                        <p>名額：<%= clubs[i].amount %></p>
+                        <button class="btn btn-primary" onclick="applyClub('攝影社')" aria-label="報名攝影社">報名</button>
+                    </li>
+                <% } %>
+
+
+            </ul>
+        </section>
+    </div>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/jquery.min.js"></script>
+</body>
 </html>
