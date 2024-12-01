@@ -2,10 +2,7 @@ const indexModel = require('../models/indexModel');
 
 exports.getAllClubs = (req,res)=>{
     const clubs = indexModel.getAll();
-    res.send({
-        status:'success',
-        clubs
-    })
+    res.render('index',{clubs:clubs});
 };
 
 exports.createClub = (req,res)=>{
@@ -14,8 +11,4 @@ exports.createClub = (req,res)=>{
     const newClub = indexModel.create({
         name
     });
-    res.send({
-        status:'success',
-        club:newClub
-    })
 };
