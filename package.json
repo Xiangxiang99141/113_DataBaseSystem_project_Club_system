@@ -18,8 +18,10 @@
   "homepage": "https://github.com/Xiangxiang99141/113_DataBaseSystem_project_Club_system#readme",
   "description": "",
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
+    "jquery": "^3.7.1",
     "mysql2": "^3.11.4",
     "uuid": "^11.0.3"
   }
