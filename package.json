@@ -23,6 +23,8 @@
     "express": "^4.21.1",
     "jquery": "^3.7.1",
     "mysql2": "^3.11.4",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
     "uuid": "^11.0.3"
   }
 }
