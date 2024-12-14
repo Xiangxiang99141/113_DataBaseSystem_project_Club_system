@@ -2,3 +2,6 @@
 
 /config/config*.json
 CLI.txt
+.env
+
+/util/database*.js
