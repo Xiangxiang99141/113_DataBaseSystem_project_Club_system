@@ -9,7 +9,11 @@ module.exports = {
     "database": process.env.DEV_DBName,
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "timezone": "+08:00" // 設定時區，這裡是 +08:00（台北）
+    "dialectOptions": {
+      "useUTC": "false",
+      "dateString":"true"
+    },
+    "timezone": "Asia/Taipei" //台灣時區
   },
   // "test": {
   //   "username": "",
