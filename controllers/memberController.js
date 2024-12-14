@@ -6,6 +6,8 @@ const encryptoion = require('../util/encryption');
 const Check = require('../util/check');
 check = new Check();
 
+
+//註冊
 exports.createUser = (req,res) =>{
     const {account,name,pwd,email,phone} = req.body;
 
@@ -58,7 +60,7 @@ exports.createUser = (req,res) =>{
     });
 };
 
-
+//尋找使用者
 exports.findUser = (req,res) =>{
     //判斷由有無傳值
     if(req.body.user_id!= null){
