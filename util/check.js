@@ -7,4 +7,13 @@ module.exports = class Check{
         return result;
     }
 
+    //判斷值為空
+    checkNull(data){
+        for(let value in data){
+            return false;
+        }
+
+        return true
+    }
+
 }
