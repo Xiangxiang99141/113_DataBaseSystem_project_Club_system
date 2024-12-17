@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Club extends Model {
     /**
@@ -11,6 +12,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Club.hasMany(models.Club_member,{
+        foreignKey:"C_id"
+      });
+      Club.hasMany(models.Club_sign_record,{
+        foreignKey:"C_id"
+      });
+      Club.hasMany(models.Club_course,{
+        foreignKey:"C_id"
+      });
+      Club.hasMany(models.Club_activity,{
+        foreignKey:"C_id"
+      });
     }
   }
   Club.init({
