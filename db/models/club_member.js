@@ -12,12 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       //定義關聯
-      Club_member.hasOne(models.Member,{
-        foreignKey:"M_id"
-      });
-      Club_member.belongsTo(models.Club,{
-        foreignKey:"C_id"
-      });
     }
   }
   Club_member.init({
