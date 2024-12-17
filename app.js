@@ -5,8 +5,9 @@ const app = express();
 
 
 //Routes
-// const indexRouter = require('./routes/indexRouter');
+const indexRouter = require('./routes/indexRouter');
 const memberRouter = require('./routes/memberRouter')
+const clubRouter = require('./routes/clubRouter');
 
 /*設定 view engine 為 ejs*/
 app.set('view engine', 'ejs');
@@ -24,8 +25,9 @@ app.use('/js',express.static(path.join(__dirname,'node_modules/bootstrap/dist/js
 app.use('/js',express.static(path.join(__dirname,'node_modules/jquery/dist')));
 
 //設定路由
-// app.use('/',indexRouter);
+app.use('/',indexRouter);
 app.use('/user',memberRouter);
+app.use('/club',clubRouter);
 
 //製作API路由
 // app.use('/api');
