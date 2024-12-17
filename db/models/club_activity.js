@@ -11,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Club_activity.belongsTo(models.Club,{
-        foreignKey:"C_id"
-      })
+      
     }
   }
   Club_activity.init({
     Ca_id: {
       type:DataTypes.INTEGER,
-      allowNull:false
+      allowNull:false,
+      primaryKey:true,
+      autoIncrement:true
     },
     Ca_name: {
       type:DataTypes.STRING(15),
@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Club_activity',
-    tableName: 'Club_activitys',
+    tableName: 'Club_activities',
     timestamps:false,
     updatedAt:false,
     createdAt:false
