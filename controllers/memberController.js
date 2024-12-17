@@ -1,9 +1,12 @@
 const { v4:uuidv4 } = require('uuid');
-const { Sequelize } = require('sequelize');
+const { Sequelize, where } = require('sequelize');
 const { Member } = require('../db/models');
 const encryptoion = require('../util/encryption');
-
+const jwt = require('jsonwebtoken');
 const Check = require('../util/check');
+const verification = require('../util/verification');
+require('dotenv').config();
+
 check = new Check();
 
 
@@ -86,3 +89,94 @@ exports.findUser = (req,res) =>{
         })
     }
 };
+
+
+//登入
+exports.login = (req,res) => {
+    const {account,pwd} = req.body;
+    const hashpwd = encryptoion(pwd) 
+    Member.findOne({
+        where:{
+            M_account:account,
+            M_pwd:hashpwd
+        }
+    }).
+    then(result => {
+
+        if(result === null){
+            res.send({
+                status:'登入失敗',
+                err:"請輸入正確的使用者名稱或密碼"
+                // loginMember:"歡迎" .
+            });
+        }else{
+
+            const token = jwt.sign(
+                {
+                    algorithm:'HS256',
+                    exp:Math.floor(Date.now()/1000)+(60*60), //token過期時間
+                    data:result.M_id //將id存入token
+                },
+                process.env.JWTSecret
+            );
+            res.setHeader('token',token);
+            res.send({
+                status:'登入成功',
+                loginMember:result
+                // loginMember:"歡迎" .
+            });
+        }
+        
+    }).catch(e => {
+        res.send({
+            status:'登入失敗',
+            err:'系統錯誤，請稍後再試'
+        });
+    });
+
+
+}
+
+//更新資料
+exports.update = (req,res) =>{
+    const token = req.headers['token'];
+    if(check.checkNull(token) === true){
+        res.send({
+            err:'請登入'
+        });
+    }else if(check.checkNull(token) === false){
+        verification(token).
+        then(tokenResult => {
+            if(tokenResult === false){
+                res.send({
+                    status:"token錯誤",
+                    err:"請重新登入"
+                });
+            }else{
+                const {account,name,pwd,email,phone} = req.body
+                const hashpwd = encryptoion(pwd)    
+                
+                Member.update({
+                    M_account:account,
+                    M_name:name,
+                    M_pwd:hashpwd,
+                    M_phone:phone,
+                    email:email
+                },{
+                    where:{
+                        M_id:tokenResult
+                    }
+                }).then(result =>{
+                    res.send({
+                        status:"資料更新成功",
+                        // id:tokenResult
+                    });
+                }).catch(e=>{
+                    res.send(e);
+                });
+                
+            }
+            
+        })
+    }
+}
