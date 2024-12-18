@@ -21,6 +21,12 @@
 ## 社團活動(club_activity)表
 `npx sequelize-cli model:generate --name Club_activity --attributes Ca_id:integer,Ca_name:string,Ca_content:string,Ca_location:string,Ca_date:Date,Ca_quota:integer,Ca_open_at:Date,Ca_close_at:DATE,insurance:boolean,transportation:boolean,Ca_plan:string,C_id:bigint`
 
-
 ## 社團參與紀錄(club_record)表
 `npx sequelize-cli model:generate --name Club_record --attributes Cr_id:integer,M_id:uuid,Cr_type:enum,Ca_id:integer,Cc_id:integer,Cr_comment:string,Cr_vote:enum`
+
+## 社團會議(club_meeting)表
+`npx sequelize-cli model:generate --name Club_meeting --attributes Cm_id:integer,Cm_name:string,Cm_chair:uuid,Cm_content:string,Cm_location:string,C_id:bigint`
+## 社團會議紀錄(club_meeting_record)表
+`npx sequelize-cli model:generate --name Club_meeting_record --attributes Cm_id:integer,Cmr_content:TEXT`
+## 社團會議參與人(club_meeting_participate_member)表
+`npx sequelize-cli model:generate --name Club_meeting_participate_member --attributes Cm_id:integer,M_id:uuid`
