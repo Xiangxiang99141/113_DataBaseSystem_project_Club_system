@@ -1,0 +1,102 @@
+<%- include('../layouts/header') %>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>社員管理</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">新增社員</button>
+    </div>
+
+    <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <div class="card">
+        <div class="card-body">
+            <% if (members && members.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>學號</th>
+                                <th>姓名</th>
+                                <th>職位</th>
+                                <th>電話</th>
+                                <th>Email</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% members.forEach(member => { %>
+                            <tr>
+                                <td><%= member.M_account %></td>
+                                <td><%= member.M_name %></td>
+                                <td><%= member.Cme_job %></td>
+                                <td><%= member.M_phone || '-' %></td>
+                                <td><%= member.email || '-' %></td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-2" onclick="editMember('<%= member.M_id %>')">編輯</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteMember('<%= member.M_id %>')">刪除</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="text-center py-4">
+                    <p class="text-muted">目前沒有社員資料</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- 新增社員 Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增社員</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMemberForm">
+                    <div class="mb-3">
+                        <label class="form-label">學號</label>
+                        <input type="text" class="form-control" name="M_account" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">姓名</label>
+                        <input type="text" class="form-control" name="M_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">職位</label>
+                        <select class="form-select" name="Cme_job" required>
+                            <option value="社員">社員</option>
+                            <option value="幹部">幹部</option>
+                            <option value="社長">社長</option>
+                            <option value="副社長">副社長</option>
+                            <option value="社團指導老師">社團指導老師</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">電話</label>
+                        <input type="tel" class="form-control" name="M_phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="submit" form="addMemberForm" class="btn btn-primary">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') %>
