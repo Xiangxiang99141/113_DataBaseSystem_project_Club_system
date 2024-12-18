@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const memberController = require('../controllers/memberController');
+const { isAuthenticated } = require('../middleware/auth');
 
-const MemberContorller = require('../controllers/memberController');
-
-router.get('/',MemberContorller.findUser);
-router.post('/',MemberContorller.createUser);
-router.post('/login',MemberContorller.login);
-router.put('/update',MemberContorller.update);
+// API 路由
+router.post('/register', memberController.createUser);
+router.post('/login', memberController.login);
+router.post('/login',isAuthenticated, memberController.login);
+router.post('/logout', isAuthenticated, memberController.logout);
+router.put('/update', isAuthenticated, memberController.update);
 
 module.exports = router;
