@@ -11,14 +11,28 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(process.env[config.use_env_variable], {
+    ...config,
+    timezone: '+08:00',
+    dialectOptions: {
+      ...config.dialectOptions,
+      timezone: '+08:00'
+    }
+  });
 } else {
   sequelize = new Sequelize(
     config.database, 
     config.username, 
     config.password, 
-    config,
-    );
+    {
+      ...config,
+      timezone: '+08:00',
+      dialectOptions: {
+        ...config.dialectOptions,
+        timezone: '+08:00'
+      }
+    }
+  );
 }
 
 fs
