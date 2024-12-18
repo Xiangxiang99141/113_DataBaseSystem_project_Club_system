@@ -5,3 +5,5 @@ CLI.txt
 .env
 
 /util/database*.js
+
+models/indexModel.js
