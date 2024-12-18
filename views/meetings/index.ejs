@@ -1,0 +1,107 @@
+<%- include('../layouts/header') %>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>會議管理</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMeetingModal">新增會議</button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>會議名稱</th>
+                            <th>主席</th>
+                            <th>會議內容</th>
+                            <th>地點</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% meetings.forEach(meeting => { %>
+                        <tr>
+                            <td><%= meeting.Cm_name %></td>
+                            <td><%= meeting.chair_name %></td>
+                            <td><%= meeting.Cm_content %></td>
+                            <td><%= meeting.Cm_location %></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-2">會議記錄</button>
+                                <button class="btn btn-sm btn-warning me-2">編輯</button>
+                                <button class="btn btn-sm btn-danger">刪除</button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增會議 Modal -->
+<div class="modal fade" id="addMeetingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增會議</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMeetingForm">
+                    <div class="mb-3">
+                        <label class="form-label">會議名稱</label>
+                        <input type="text" class="form-control" name="Cm_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">主席</label>
+                        <select class="form-select" name="Cm_chair" required>
+                            <% members.forEach(member => { %>
+                            <option value="<%= member.M_id %>"><%= member.M_name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">會議內容</label>
+                        <textarea class="form-control" name="Cm_content" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">地點</label>
+                        <input type="text" class="form-control" name="Cm_location" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="submit" form="addMeetingForm" class="btn btn-primary">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 會議記錄 Modal -->
+<div class="modal fade" id="meetingRecordModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">會議記錄</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="meetingRecordForm">
+                    <div class="mb-3">
+                        <label class="form-label">會議記錄內容</label>
+                        <textarea class="form-control" name="Cmr_content" rows="10" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                <button type="submit" form="meetingRecordForm" class="btn btn-primary">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') %>
