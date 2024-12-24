@@ -30,3 +30,22 @@
 `npx sequelize-cli model:generate --name Club_meeting_record --attributes Cm_id:integer,Cmr_content:TEXT`
 ## 社團會議參與人(club_meeting_participate_member)表
 `npx sequelize-cli model:generate --name Club_meeting_participate_member --attributes Cm_id:integer,M_id:uuid`
+
+## 社團器材(club__equipment)表
+`npx sequelize-cli model:generate --name Club__equipment --attributes Ce_id:integer,
+Ce_name:string,Ce_spec:string,Ce_count:integer,Ce_use:string,Ce_source:enum,Ce_img:string,Ce_admin:uuid,Ce_report:uuid,Ce_purch_at:date,C_id:bigint`
+
+## 社團歷史紀錄(club_history)表
+`npx sequelize-cli model:generate --name Club_history --attributes Ch_id:integer,Ch_type:enum,Ch_name:string,Ch_description:string,Ch_update_at:date,C_id:bigint`
+
+## 社團公告(club_announcement)表
+`npx sequelize-cli model:generate --name Club_announcement --attributes Can_id:integer,Can_title:enum,Can_content:text,Can_attachment:string,Can_image:string,Can_created_at:date,C_id:bigint`
+
+## 保險紀錄(insurance)表
+`npx sequelize-cli model:generate --name Insurance --attributes Ins_id:integer,Ins_isadult:boolean,Ins_idcard:string,Ins_engname:string,Ins_nationality:enum,Ins_idcardimg:string,Ins_birthday:DATEONLY,Ins_liaison:string,Ins_liaison_phone:string`
+
+## 交通紀錄(transportation)表
+`npx sequelize-cli model:generate --name Transportation --attributes Ts_id:integer,Ts_method:enum`
+
+## 社課活動報名紀錄(signup_record)表
+`npx sequelize-cli model:generate --name Signup_record --attributes su_id:integer,M_id:uuid,Su_type:enum,Ca_id:integer,Cc_id:integer,Ins_id:integer,Ts_id:integer,Ts_method:enum,Su_date:date`
