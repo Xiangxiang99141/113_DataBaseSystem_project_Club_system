@@ -1,0 +1,70 @@
+/* 全局樣式 */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 導航欄樣式 */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* 內容區域樣式 */
+.container {
+    flex: 1;
+    padding: 20px;
+}
+
+/* 卡片樣式 */
+.card {
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* 表格樣式 */
+.table th {
+    background-color: #f8f9fa;
+}
+
+/* 按鈕樣式 */
+.btn {
+    border-radius: 4px;
+}
+
+/* Modal 樣式 */
+.modal-content {
+    border-radius: 8px;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* 頁尾樣式 */
+.footer {
+    margin-top: auto;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .table-responsive {
+        margin: 0 -10px;
+    }
+}
