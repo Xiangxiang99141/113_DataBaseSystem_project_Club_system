@@ -13,11 +13,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Member.hasMany(models.Club_member,{
-        foreignKey:"M_id"
+      Member.belongsToMany(models.Club, {
+        through: models.Club_member,
+        foreignKey: "M_id"
       });
       Member.hasMany(models.Club_record,{
         foreignKey:"M_id"
+      });
+      Member.hasMany(models.Signup_record, {
+        foreignKey: "M_id"
       });
     }
   }
@@ -56,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Member',
     tableName:'Members',
     timestamps:false,
-    createdAt:'M_rigister_at',
+    createdAt:'M_register_at',
     updatedAt:false
   });
   return Member;
