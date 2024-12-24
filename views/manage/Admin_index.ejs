@@ -1,0 +1,109 @@
+<%- include('../layouts/header') %>
+
+<div class="container mt-4">
+    <h1 class="text-center mb-5">社團管理系統</h1>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- 社員管理卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people fs-1 mb-3"></i>
+                    <h5 class="card-title">社員管理</h5>
+                    <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
+                    <a href="/manage/members" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活動管理卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-event fs-1 mb-3"></i>
+                    <h5 class="card-title">活動管理</h5>
+                    <p class="card-text">規劃及管理社團活動、報名系統及活動記錄</p>
+                    <a href="/manage/activities" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 社課管理卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-book fs-1 mb-3"></i>
+                    <h5 class="card-title">社課管理</h5>
+                    <p class="card-text">安排社課時間、內容及出席記錄</p>
+                    <a href="/manage/courses" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 會議管理卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-chat-square-text fs-1 mb-3"></i>
+                    <h5 class="card-title">會議管理</h5>
+                    <p class="card-text">記錄社團會議內容及決議事項</p>
+                    <a href="/manage/meetings" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 器材管理卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-tools fs-1 mb-3"></i>
+                    <h5 class="card-title">器材管理</h5>
+                    <p class="card-text">管理社團器材的借用及維護記錄</p>
+                    <a href="/manage/equipment" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系統設定卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear fs-1 mb-3"></i>
+                    <h5 class="card-title">系統設定</h5>
+                    <p class="card-text">管理系統設定及權限配置</p>
+                    <a href="/manage/settings" class="btn btn-primary">進入設定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速統計資訊 -->
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">社員總數</h5>
+                    <p class="card-text display-4"><%= memberCount %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">本月活動數</h5>
+                    <p class="card-text display-4"><%= activityCount %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">本月社課數</h5>
+                    <p class="card-text display-4"><%= courseCount %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') %>
