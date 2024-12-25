@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull:false
       },
-      singup_cause: {
+      signup_cause: {
         type: Sequelize.STRING(20),
         allowNull:false
       },
