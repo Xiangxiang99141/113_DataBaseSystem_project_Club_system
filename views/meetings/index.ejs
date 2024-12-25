@@ -2,6 +2,21 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+            
+            <!-- 成功提示 -->
+            <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+            
         <h2>會議管理</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMeetingModal">新增會議</button>
     </div>
@@ -20,19 +35,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% meetings.forEach(meeting => { %>
-                        <tr>
-                            <td><%= meeting.Cm_name %></td>
-                            <td><%= meeting.chair_name %></td>
-                            <td><%= meeting.Cm_content %></td>
-                            <td><%= meeting.Cm_location %></td>
-                            <td>
-                                <button class="btn btn-sm btn-info me-2">會議記錄</button>
-                                <button class="btn btn-sm btn-warning me-2">編輯</button>
-                                <button class="btn btn-sm btn-danger">刪除</button>
-                            </td>
-                        </tr>
-                        <% }); %>
+                        <% if (meetings) { %>
+                            <% meetings.forEach(meeting => { %>
+                            <tr>
+                                <td><%= meeting.Cm_name %></td>
+                                <td><%= meeting.Member.M_name %></td>
+                                <td><%= meeting.Cm_content %></td>
+                                <td><%= meeting.Cm_location %></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-2" disabled>會議記錄</button>
+                                    <button class="btn btn-sm btn-warning me-2" disabled>編輯</button>
+                                    <button class="btn btn-sm btn-danger" disabled>刪除</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        <% } %>
                     </tbody>
                 </table>
             </div>
@@ -52,29 +69,35 @@
                 <form id="addMeetingForm">
                     <div class="mb-3">
                         <label class="form-label">會議名稱</label>
-                        <input type="text" class="form-control" name="Cm_name" required>
+                        <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">主席</label>
-                        <select class="form-select" name="Cm_chair" required>
+                        <% if (members != undefined) { %>
+                            <select class="form-select" name="chair" required>
                             <% members.forEach(member => { %>
-                            <option value="<%= member.M_id %>"><%= member.M_name %></option>
+                            <option value="<%= member.M_id %>"><%= member.Member.M_name %>-<%= member.Cme_job %></option>
                             <% }); %>
-                        </select>
+                            </select>
+                        <% } %>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">會議內容</label>
-                        <textarea class="form-control" name="Cm_content" rows="3" required></textarea>
+                        <textarea class="form-control" name="content" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">地點</label>
-                        <input type="text" class="form-control" name="Cm_location" required>
+                        <input type="text" class="form-control" name="location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">日期時間</label>
+                        <input type="datetime-local" class="form-control" name="datetime" required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="submit" form="addMeetingForm" class="btn btn-primary">新增</button>
+                <button type="button" class="btn btn-primary" id="createMeetingBtn">新增</button>
             </div>
         </div>
     </div>
@@ -103,5 +126,65 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('createMeetingBtn').addEventListener('click', async function() {
+    try {
+        // 獲取表單數據
+        const form = document.getElementById('addMeetingForm');
+        const formData = new FormData(form);
+        const meetingData = Object.fromEntries(formData.entries());
+
+        // 發送 AJAX 請求
+        const response = await fetch('../../api/create/meetings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(meetingData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            // 關閉 Modal
+            bootstrap.Modal.getInstance(document.getElementById('addMeetingModal')).hide();
+            
+            // 顯示成功訊息
+            const alertHtml = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    會議新增成功
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+
+            // 重新載入會議列表
+            location.reload();
+        } else {
+            throw new Error(result.message || '新增失敗');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // 顯示錯誤訊息
+        const alertHtml = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${error.message || '新增會議時發生錯誤'}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+    }
+});
+
+// 清除 Modal 表單
+document.getElementById('addMeetingModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('addMeetingForm').reset();
+});
+</script>
 
 <%- include('../layouts/footer') %>
