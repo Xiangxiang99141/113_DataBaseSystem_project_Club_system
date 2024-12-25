@@ -7,3 +7,5 @@ CLI.txt
 /util/database*.js
 
 models/indexModel.js
+
+public/uploads/*
