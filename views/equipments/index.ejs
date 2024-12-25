@@ -1,0 +1,287 @@
+<%- include('../layouts/header') %>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        
+        <!-- 成功提示 -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        
+        <h2>器材管理</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEquipmentModal">新增器材</button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>器材名稱</th>
+                            <th>規格</th>
+                            <th>數量</th>
+                            <th>來源</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (equipments && equipments.length > 0) { %>
+                            <% equipments.forEach(equipment => { %>
+                            <tr>
+                                <td><%= equipment.Ce_name %></td>
+                                <td><%= equipment.Ce_spec %></td>
+                                <td><%= equipment.Ce_count %></td>
+                                <td><%= equipment.Ce_source %></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-2" 
+                                            onclick="showEquipmentDetails('<%= equipment.Ce_id %>', '<%= equipment.Ce_name %>', '<%= equipment.Ce_count %>', '<%= equipment.Ce_spec %>', '<%= equipment.Ce_source %>', '<%= equipment.Member.M_name %>', '<%= equipment.Member.M_name %>')">
+                                        詳細資訊
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">目前沒有器材記錄</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 器材詳細資訊 Modal -->
+<div class="modal fade" id="equipmentDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">器材詳細資訊</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="fw-bold">器材名稱：</label>
+                    <span id="detailName"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">數量：</label>
+                    <span id="detailQuantity"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">規格：</label>
+                    <span id="detailSpec"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">來源：</label>
+                    <span id="detailSource"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">填報人：</label>
+                    <span id="detailAdmin"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">管理人：</label>
+                    <span id="detailReport"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增器材 Modal -->
+<div class="modal fade" id="addEquipmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增器材</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEquipmentForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">器材名稱</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">數量</label>
+                        <input type="number" class="form-control" name="quantity" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">規格</label>
+                        <input type="text" class="form-control" name="spec" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">用途</label>
+                        <input type="text" class="form-control" name="use" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">來源</label>
+                        <select class="form-select" name="source" required>
+                            <option value="社團自籌">社團自籌</option>
+                            <option value="學校經費">學校經費</option>
+                            <option value="贊助">贊助</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">購買日期</label>
+                        <input type="date" class="form-control" name='date'>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">填報人</label>
+                        <input type="text" class="form-control" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">管理者</label>
+                        <% if (members != undefined) { %>
+                            <select class="form-select" name="admin" required>
+                            <% members.forEach(member => { %>
+                            <option value="<%= member.M_id %>"><%= member.Member.M_name %>-<%= member.Cme_job %></option>
+                            <% }); %>
+                            </select>
+                        <% } %>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">器材照片</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="photo" accept="image/*" id="equipmentPhoto">
+                            <button class="btn btn-outline-secondary" type="button" id="previewBtn">預覽</button>
+                        </div>
+                        <div id="photoPreview" class="mt-2 d-none">
+                            <img src="" alt="預覽圖" class="img-fluid" style="max-height: 200px;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="createEquipmentBtn">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 顯示器材詳細資訊
+function showEquipmentDetails(id, name, quantity, spec, source, admin, report) {
+    document.getElementById('detailName').textContent = name;
+    document.getElementById('detailQuantity').textContent = quantity;
+    document.getElementById('detailSpec').textContent = spec;
+    document.getElementById('detailSource').textContent = source;
+    document.getElementById('detailAdmin').textContent = admin;
+    document.getElementById('detailReport').textContent = report || '無';
+    
+    new bootstrap.Modal(document.getElementById('equipmentDetailsModal')).show();
+}
+
+// 新增器材
+document.getElementById('createEquipmentBtn').addEventListener('click', async function() {
+    try {
+        const form = document.getElementById('addEquipmentForm');
+        const formData = new FormData(form);
+
+        // 檢查必填欄位
+        const requiredFields = ['name', 'quantity', 'spec', 'use', 'source', 'admin'];
+        for (const field of requiredFields) {
+            if (!formData.get(field)) {
+                throw new Error(`${field} 是必填欄位`);
+            }
+        }
+
+        // 檢查數量是否為正數
+        const quantity = parseInt(formData.get('quantity'));
+        if (isNaN(quantity) || quantity <= 0) {
+            throw new Error('數量必須大於 0');
+        }
+
+        // 如果沒有選擇日期，使用當前日期
+        if (!formData.get('date')) {
+            formData.set('date', new Date().toISOString().split('T')[0]);
+        }
+
+        const response = await fetch('../../api/create/equipment', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        if (result.success) {
+            bootstrap.Modal.getInstance(document.getElementById('addEquipmentModal')).hide();
+            
+            const alertHtml = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    器材新增成功
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+
+            location.reload();
+        } else {
+            throw new Error(result.message || '新增失敗');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        const alertHtml = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${error.message || '新增器材時發生錯誤'}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+    }
+});
+
+// 預覽圖片
+document.getElementById('equipmentPhoto').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+            alert('圖片大小不能超過 5MB');
+            this.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewDiv = document.getElementById('photoPreview');
+            const previewImg = previewDiv.querySelector('img');
+            previewImg.src = e.target.result;
+            previewDiv.classList.remove('d-none');
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('previewBtn').addEventListener('click', function() {
+    document.getElementById('equipmentPhoto').click();
+});
+
+// 清除 Modal 表單和預覽圖
+document.getElementById('addEquipmentModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('addEquipmentForm').reset();
+    const previewDiv = document.getElementById('photoPreview');
+    previewDiv.classList.add('d-none');
+    previewDiv.querySelector('img').src = '';
+});
+</script>
+
+<%- include('../layouts/footer') %>
