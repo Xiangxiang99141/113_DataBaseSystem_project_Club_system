@@ -46,7 +46,11 @@ module.exports = (sequelize, DataTypes) => {
     C_id: {
       type: DataTypes.BIGINT,
       allowNull: false
-    }
+    },
+    Cm_date_at: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'Club_meeting',
