@@ -15,7 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:'C_id'
       });
       Club__equipment.belongsTo(models.Member,{
-        foreignKey:'M_id'
+        foreignKey:'Ce_admin'
+      });
+      Club__equipment.belongsTo(models.Member,{
+        foreignKey:'Ce_report'
       });
     }
   }
