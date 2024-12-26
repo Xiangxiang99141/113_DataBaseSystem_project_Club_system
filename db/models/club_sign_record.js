@@ -1,23 +1,28 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Club_sign_record extends Model {
-    
     static associate(models) {
+      Club_sign_record.belongsTo(models.Member,{
+        foreignKey: "M_id"
+      })
     }
   }
   Club_sign_record.init({
     M_id: {
-      type:DataTypes.UUID,
-      allowNull:false
+      type: DataTypes.STRING,
+      allowNull: false,
+      // references: {
+      //   model: 'Members',
+      //   key: 'M_id'
+      // }
     },
     signup_at: {
       type:DataTypes.DATE,
       allowNull:false
     },
-    singup_cause: {
+    signup_cause: {
       type:DataTypes.STRING(20),
       allowNull:false
     },
@@ -37,9 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Club_sign_record',
     tableName: 'Club_sign_records',
-    timestamps:false,
-    createdAt:false,
-    updatedAt:false
+    timestamps: false,
   });
   return Club_sign_record;
 };
