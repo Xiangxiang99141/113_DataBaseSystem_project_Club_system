@@ -36,7 +36,11 @@ module.exports = {
           model:"Clubs",
           key:"C_id"
         }
-      }
+      },
+      Cm_date_at: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
     });
   },
   async down(queryInterface, Sequelize) {
