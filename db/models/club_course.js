@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Club_course.belongsTo(models.Club,{
         foreignKey:"C_id"
+      });
+      Club_course.hasOne(models.Signup_record,{
+        foreignKey:"Cc_id"
       })
     }
   }
@@ -71,8 +74,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Club_course',
     tableName: 'Club_courses',
     timestamps:false,
-    createdAt:false,
-    updatedAt:false
   });
   return Club_course;
 };
