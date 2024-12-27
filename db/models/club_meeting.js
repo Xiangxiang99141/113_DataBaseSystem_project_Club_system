@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Club_meeting.belongsTo(models.Member, {
         foreignKey: "Cm_chair"
       });
-      Club_meeting.hasMany(models.Club_meeting_record, {
+      Club_meeting.hasOne(models.Club_meeting_record, {
         foreignKey: "Cm_id"
       });
       Club_meeting.hasMany(models.Club_meeting_participate_member, {
