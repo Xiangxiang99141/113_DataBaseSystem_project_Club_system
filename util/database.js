@@ -10,10 +10,11 @@ module.exports = {
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "useUTC": "false",
-      "dateString":"true"
+        // "useUTC": "false",
+        // "dateString":"true"
     },
-    "timezone": "Asia/Taipei" //台灣時區
+    "timezone": "Asia/Taipei", //台灣時區
+    "logging":false
   },
   // "test": {
   //   "username": "",
