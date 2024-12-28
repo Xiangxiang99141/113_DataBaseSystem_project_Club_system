@@ -31,9 +31,8 @@
 ## 社團會議參與人(club_meeting_participate_member)表
 `npx sequelize-cli model:generate --name Club_meeting_participate_member --attributes Cm_id:integer,M_id:uuid`
 
-## 社團器材(club__equipment)表
-`npx sequelize-cli model:generate --name Club__equipment --attributes Ce_id:integer,
-Ce_name:string,Ce_spec:string,Ce_count:integer,Ce_use:string,Ce_source:enum,Ce_img:string,Ce_admin:uuid,Ce_report:uuid,Ce_purch_at:date,C_id:bigint`
+## 社團器材(club_equipment)表
+`npx sequelize-cli model:generate --name Club_equipment --attributes Ce_id:integer,Ce_name:string,Ce_spec:string,Ce_count:integer,Ce_use:string,Ce_source:enum,Ce_img:string,Ce_admin:uuid,Ce_report:uuid,Ce_purch_at:date,C_id:bigint`
 
 ## 社團歷史紀錄(club_history)表
 `npx sequelize-cli model:generate --name Club_history --attributes Ch_id:integer,Ch_type:enum,Ch_name:string,Ch_description:string,Ch_update_at:date,C_id:bigint`
