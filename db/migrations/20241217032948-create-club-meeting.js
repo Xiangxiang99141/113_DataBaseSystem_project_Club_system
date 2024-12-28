@@ -38,7 +38,7 @@ module.exports = {
         }
       },
       Cm_date_at: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false
       },
     });
