@@ -31,7 +31,7 @@ module.exports = {
       Cc_id: {
         type: Sequelize.INTEGER,
         references:{
-          model:"Club_course",
+          model:"Club_courses",
           key:"Cc_id"
         }
       },
