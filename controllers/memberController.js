@@ -1,14 +1,12 @@
 const { v4:uuidv4 } = require('uuid');
-const { Sequelize, where } = require('sequelize');
-const { Member } = require('../db/models');
+const { Member,Club_member,Club } = require('../db/models');
 const encryptoion = require('../util/encryption');
-const jwt = require('jsonwebtoken');
 const Check = require('../util/check');
 const verification = require('../util/verification');
+const auth = require('../middleware/auth'); // 新增 auth 模組
 require('dotenv').config();
 
 check = new Check();
-
 
 //註冊
 exports.createUser = (req,res) =>{
@@ -63,6 +61,8 @@ exports.createUser = (req,res) =>{
     });
 };
 
+
+
 //尋找使用者
 exports.findUser = (req,res) =>{
     //判斷由有無傳值
@@ -92,50 +92,80 @@ exports.findUser = (req,res) =>{
 
 
 //登入
-exports.login = (req,res) => {
-    const {account,pwd} = req.body;
-    const hashpwd = encryptoion(pwd) 
-    Member.findOne({
-        where:{
-            M_account:account,
-            M_pwd:hashpwd
-        }
-    }).
-    then(result => {
+exports.login = async (req, res) => {
+    try {
+        const { account, pwd } = req.body;
+        const hashpwd = encryptoion(pwd);
 
-        if(result === null){
-            res.send({
-                status:'登入失敗',
-                err:"請輸入正確的使用者名稱或密碼"
-                // loginMember:"歡迎" .
-            });
-        }else{
-
-            const token = jwt.sign(
-                {
-                    algorithm:'HS256',
-                    exp:Math.floor(Date.now()/1000)+(60*60), //token過期時間
-                    data:result.M_id //將id存入token
-                },
-                process.env.JWTSecret
-            );
-            res.setHeader('token',token);
-            res.send({
-                status:'登入成功',
-                loginMember:result
-                // loginMember:"歡迎" .
-            });
-        }
-        
-    }).catch(e => {
-        res.send({
-            status:'登入失敗',
-            err:'系統錯誤，請稍後再試'
+        const member = await Member.findOne({
+            attributes:['M_id'],
+            where: {
+                M_account: account,
+                M_pwd: hashpwd
+            }
         });
-    });
 
+        if (!member) {
+            req.flash('error', '帳號或密碼錯誤');
+            return res.status(401).json({
+                success: false,
+                message: '帳號或密碼錯誤'
+            });
+        }
 
-}
+        const clubPermissions = await Club_member.findAll({
+            attributes:['Cme_job'],
+            include:[{
+                    attributes:['C_name'],
+                    model:Club,
+                },{
+                    attributes:['M_name'],
+                    model:Member,
+            }],
+            where:{M_id:member.M_id}
+        });
+
+        member.Permissions = clubPermissions
+
+        // 生成 JWT token
+        const token = auth.generateToken(member);
+        
+        // 設置 Cookie
+        auth.setAuthCookie(res, token);
+
+        req.flash('success', '登入成功');
+        res.send({
+            success:true,
+            message: '登入成功'
+        })
+    } catch (error) {
+        console.error('Login error:', error);
+        req.flash('error', '登入失敗，請稍後再試');
+        res.status(500).json({
+            success: false,
+            message: '登入失敗，請稍後再試'
+        });
+    }
+};
+
+// 登出
+exports.logout = (req, res) => {
+    // 清除所有相關的 cookies
+    res.clearCookie('token');
+    res.clearCookie('userId');
+    res.clearCookie('userName');
+    
+    // 清除 session（如果有使用的話）
+    if (req.session) {
+        req.session.destroy();
+    }
+
+    // 使用 auth 模組清除認證相關的 cookie
+    auth.clearAuthCookie(res);
+
+    // 重定向到首頁
+    res.redirect('/');
+};
 
 //更新資料
 exports.update = (req,res) =>{
@@ -178,5 +208,58 @@ exports.update = (req,res) =>{
             }
             
         })
+    }
+}
+
+
+exports.getview = async (req, res) => {
+    try {
+        Club_member.findAll({
+            attributes: ['C_id', 'M_id', 'Cme_job'],
+            include: [{
+                model: Member,
+                required: true,
+                attributes: ['M_account', 'M_name', 'M_phone', 'email']
+            }],
+            order: [
+                ['Cme_job', 'ASC'],
+                [Member, 'M_name', 'ASC']
+            ]
+        }).then(members => {
+            if (!members || members.length === 0) {
+                return res.render('members/index', { 
+                    members: [],
+                    error: '目前沒有社員資料' 
+                });
+            }
+            
+            // 處理數據以便於前端顯示
+            const processedMembers = members.map(member => ({
+                C_id: member.C_id,
+                M_id: member.M_id,
+                M_account: member.Member.M_account,
+                M_name: member.Member.M_name,
+                Cme_job: member.Cme_job,
+                M_phone: member.Member.M_phone || '-',
+                email: member.Member.email || '-'
+            }));
+
+            res.render('members/index', { 
+                members: processedMembers,
+                error: null 
+            });
+        }).catch(error => {
+            console.error('Error in getview:', error);
+            res.render('members/index', { 
+                members: [],
+                error: '獲取社員資料時發生錯誤' 
+            });
+        });
+    } catch (error) {
+        console.error('Error in getview:', error);
+        res.render('members/index', { 
+            members: [],
+            error: '獲取社員資料時發生錯誤' 
+        });
     }
 }
