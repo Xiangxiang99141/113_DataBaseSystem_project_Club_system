@@ -10,13 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Club_sign_record.init({
+    id:{
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      autoIncrement:true,
+      primaryKey:true        
+    },
     M_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      // references: {
-      //   model: 'Members',
-      //   key: 'M_id'
-      // }
     },
     signup_at: {
       type:DataTypes.DATE,
