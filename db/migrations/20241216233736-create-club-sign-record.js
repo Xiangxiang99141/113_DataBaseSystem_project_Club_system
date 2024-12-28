@@ -4,6 +4,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Club_sign_records', {
+      id:{
+        type:Sequelize.INTEGER,
+        allowNull:false,
+        autoIncrement:true,
+        primaryKey:true        
+      },
       M_id: {
         type: Sequelize.UUID,
         allowNull:false,
