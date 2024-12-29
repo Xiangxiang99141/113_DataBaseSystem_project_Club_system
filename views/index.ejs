@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>社團管理系統</title>
-    <!-- <link rel="stylesheet" href="styles/styles.css"> -->
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
     <%- include('layouts/header-index') %>
-
+    
     <div class="container mt-4">
         <!-- 錯誤提示 -->
         <% if (error) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= error %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <% } %>
-        
-        <!-- 成功提示 -->
-        <% if (success) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= success %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+            
+            <!-- 成功提示 -->
+            <% if (success) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <% } %>
 
@@ -33,8 +34,8 @@
                 <h2>社團列表</h2>
             </div>
             <div class="col-auto">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                <div class="dropdown">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         社團類型篩選
                     </button>
                     <ul class="dropdown-menu">
@@ -47,9 +48,10 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <% clubs.forEach(function(club) { %>
+            
+            <% clubs.forEach(function(club) { //製作社團列表%>
                 <div class="col">
                     <div class="card h-100">
                         <div class="card-body">
@@ -62,25 +64,31 @@
                                         社團網址：<a href="<%= club.C_web %>" target="_blank"><%= club.C_url %></a>
                                     </small>
                                 </p>
-                            <% } %>
-                            <p class="card-text">
-                                <small class="text-muted">名額：<%= club.C_quota %></small>
+                                <% } %>
+                                <p class="card-text">
+                                    <small class="text-muted">名額：<%= club.C_quota %></small>
                             </p>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
-                            <% if (locals.user) { %>
-                                <button class="btn btn-primary w-100" 
-                                        onclick="applyClub('<%= club.C_id %>')"
-                                        <%= club.isMember ? 'disabled' : '' %>>
-                                    <%= club.isMember ? '已是社員' : '報名' %>
-                                </button>
-                            <% } else { %>
-                                <a class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#loginModal">登入後報名</a>
-                            <% } %>
+                            <% if (isLogin) { %>
+                                <button class="btn btn-primary w-100"
+                                <% if(!club.isMember || !club.isVerify){ %> 
+                                    onclick="applyClub('<%= club.C_id %>', '<%= userId %>')"
+                                    <% } %>
+                                        <%= (club.isMember||club.isVerify) ? 'disabled' : '' %>>
+                                        <% if (club.isMember || club.isVerify) { %>
+                                            <%= club.isMember ? '查看社團' : '審核中' %>
+                                            <% } else { %>
+                                                <%= '報名' %>
+                                        <% } %>
+                                    </button>
+                                    <% } else { %>
+                                        <a class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#loginModal">登入後報名</a>
+                                        <% } %>
                         </div>
                     </div>
                 </div>
-            <% }); %>
+                <% }); %>
         </div>
     </div>
 
@@ -88,60 +96,28 @@
     <div class="modal fade" id="applyModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">確認報名</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>確定要報名這個社團嗎？</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="confirmApply">確定報名</button>
-                </div>
+                <form>
+                    <div class="modal-header">
+                        <h5 class="modal-title">報名原因</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">原因</span>
+                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" id="signup_cause">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="confirmApply">確定報名</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    <script>
-    let selectedClubId = null;
-
-    function applyClub(clubId) {
-        selectedClubId = clubId;
-        const modal = new bootstrap.Modal(document.getElementById('applyModal'));
-        modal.show();
-    }
-
-    document.getElementById('confirmApply').addEventListener('click', async function() {
-        if (!selectedClubId) return;
-        
-        try {
-            const response = await fetch('/api/clubs/apply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    clubId: selectedClubId
-                })
-            });
-
-            const result = await response.json();
-            
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert(result.message || '報名失敗，請稍後再試');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('報名失敗，請稍後再試');
-        }
-    });
-    </script>
-
+    
     <%- include('layouts/footer') %>
-    <script src="./js/bootstrap.min.js"></script>
-    <script src="./js/jquery.min.js"></script>
+    
+    <script src="./js/script.js"></script>
 </body>
 </html>
