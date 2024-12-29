@@ -12,11 +12,12 @@ const manageController = require('../controllers/manageController');
 const uploadController = require('../controllers/uploadController');
 
 const auth = require('../middleware/auth');
-const { Club_sign_record, Club_meeting, Club__equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement} = require('../db/models');
+const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement} = require('../db/models');
 
 // 設置文件上傳
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        //設定上傳根目錄
         let uploadDir = 'public/uploads/';
         
         // 根據不同類型的文件設置不同的上傳目錄
@@ -476,7 +477,7 @@ router.post('/club/:id/meeting',  async (req, res) => {
 // 設備相關 API
 router.get('/club/:id/equipments', async (req, res) => {
     try {
-        const equipment = await Club__equipment.findAll({
+        const equipment = await Club_equipment.findAll({
             where:{
                 C_id:req.params.id
             },
@@ -513,7 +514,7 @@ router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => 
             });
         }
 
-        const equipment = await Club__equipment.create({
+        const equipment = await Club_equipment.create({
             Ce_name: name,
             Ce_count: quantity,
             Ce_spec: spec,
@@ -521,8 +522,8 @@ router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => 
             Ce_source: source,
             Ce_img: req.file ? `/uploads/equipments/${req.file.filename}` : null,
             Ce_admin: admin,
-            Ce_report: req.user.M_id,
-            // Ce_report: 'f2a017ac-0b3e-4aa3-8b96-63223da0e573',
+            // Ce_report: req.user.M_id,
+            Ce_report: '5dbe2388-fc3c-4728-87ad-f6a91dd22fcd',
             Ce_purch_at: date ? new Date(date) : new Date(),
             C_id: req.params.id
         });
@@ -541,7 +542,6 @@ router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => 
         });
     }
 });
-
 
 //歷史資料
 router.get('/club/:id/histories',async (req,res)=>{
@@ -567,7 +567,7 @@ router.get('/club/:id/histories',async (req,res)=>{
     }
     
 });
-router.post('/club/:id/history',upload.single('attachment'),uploadController.Upload_history);
+router.post('/club/:id/history', upload.single('attachment'),uploadController.Upload_history);
 
 //公告
 router.get('/club/:id/announcements',async (req,res)=>{
