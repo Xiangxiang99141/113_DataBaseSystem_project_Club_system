@@ -61,7 +61,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Insurance',
     tableName: 'Insurances',
-    timestamps:false
+    timestamps:false,
+    comment:'保險資料'
   });
   return Insurance;
 };

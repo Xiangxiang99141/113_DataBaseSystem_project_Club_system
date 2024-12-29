@@ -48,7 +48,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Club_member',
     tableName: 'Club_members',
-    timestamps: false
+    timestamps: false,
+    comment:'社團成員'
   });
   return Club_member;
 };

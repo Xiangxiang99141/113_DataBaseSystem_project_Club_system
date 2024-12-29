@@ -74,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Club_course',
     tableName: 'Club_courses',
     timestamps:false,
+    comment:'社團課程'
   });
   return Club_course;
 };

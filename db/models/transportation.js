@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Transportation',
     tableName: 'Transportations',
-    timestamps:false
+    timestamps:false,
+    comment:'交通資料'
   });
   return Transportation;
 };

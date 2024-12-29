@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Club_sign_record',
     tableName: 'Club_sign_records',
     timestamps: false,
+    comment:'社團報名紀錄'
   });
   return Club_sign_record;
 };

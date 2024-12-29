@@ -57,7 +57,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'Club_meetings',
     timestamps: false,
     updatedAt: false,
-    createdAt: false
+    createdAt: false,
+    comment:'社團會議'
   });
   return Club_meeting;
 };

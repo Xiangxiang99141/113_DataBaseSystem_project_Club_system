@@ -61,7 +61,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName:'Members',
     timestamps:false,
     createdAt:'M_register_at',
-    updatedAt:false
+    updatedAt:false,
+    comment:'成員'
   });
   return Member;
 };

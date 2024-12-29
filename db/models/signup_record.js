@@ -67,7 +67,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'Signup_records',
     timestamps:true,
     createdAt:'Su_create_at',
-    updatedAt:false
+    updatedAt:false,
+    comment:'活動報名紀錄'
   });
   return Signup_record;
 };
