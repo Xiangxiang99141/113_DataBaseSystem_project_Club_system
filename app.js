@@ -19,17 +19,23 @@ const apiRouter = require('./routes/ApiRouter');
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'/views'));
 
+
 //解析JSON跟URL編碼，需在路由前設定
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 
+
 //導入static檔案 ex:css,js,img
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname,'/public')));
-app.use('/css',express.static(path.join(__dirname,'node_modules/bootstrap/dist/css')));
-app.use('/js',express.static(path.join(__dirname,'node_modules/bootstrap/dist/js')));
+// app.use('/css',express.static(path.join(__dirname,'node_modules/bootstrap/dist/css')));
+// app.use('/js',express.static(path.join(__dirname,'node_modules/bootstrap/dist/js')));
+app.use('/css',express.static(path.join(__dirname,'public/bootstrap/css')));
+app.use('/js',express.static(path.join(__dirname,'public/bootstrap/js')));
 app.use('/js',express.static(path.join(__dirname,'node_modules/jquery/dist')));
+app.use('/js',express.static(path.join(__dirname,'public/script')));
+
 
 // 設置 session
 app.use(session({
@@ -42,8 +48,10 @@ app.use(session({
     }
 }));
 
+
 // 設置 flash 消息
 app.use(flash());
+
 
 // 全局中間件，設置 flash 消息到 res.locals
 app.use((req, res, next) => {
@@ -52,11 +60,13 @@ app.use((req, res, next) => {
     next();
 });
 
+
 //設定路由
 app.use('/',indexRouter);
 app.use('/user',memberRouter);
 app.use('/club',clubRouter);
 app.use('/manage',manageRouter);
+
 //API路由
 app.use('/api',apiRouter);
 
