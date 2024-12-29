@@ -1,5 +1,5 @@
 const { raw } = require('mysql2');
-const { Club, Club_member, Member, Club_meeting, Club__equipment} = require('../db/models');
+const { Club, Club_member, Member, Club_meeting, Club_equipment} = require('../db/models');
 const { Op, where, Model } = require('sequelize');
 const { cache } = require('ejs');
 const e = require('connect-flash');
@@ -220,7 +220,7 @@ async function createmeeting(name,content,location,userId,clubId,date){
 
 
 async function getEquipment(clubId=null){
-    const equipents = await Club__equipment.findAll({
+    const equipents = await Club_equipment.findAll({
         include:[{
             model:Club,
             attributes:['C_name']
