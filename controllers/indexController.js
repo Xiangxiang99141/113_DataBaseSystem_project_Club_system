@@ -1,13 +1,25 @@
+const { where } = require('sequelize');
 const { Club, Club_member, Club_sign_record} = require('../db/models'); 
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
 
 exports.Renderindex = async (req,res)=>{
+    let clubs;
     try{
-        const clubs = await Club.findAll({
-            attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
-            raw: true
-        });
+        if(req.query.type == undefined){
+            clubs = await Club.findAll({
+                attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
+                raw: true,
+            });
+        }else{
+            clubs = await Club.findAll({
+                attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
+                raw: true,
+                where:{
+                    C_type:req.query.type
+                }
+            });
+        }
 
         const token = req.cookies[COOKIE_NAME];
         let is_login = false;
