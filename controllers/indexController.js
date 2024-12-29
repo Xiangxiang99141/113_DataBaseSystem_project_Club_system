@@ -1,9 +1,6 @@
-// const { raw } = require('mysql2');
-const { Club,Club_member } = require('../db/models'); 
+const { Club, Club_member, Club_sign_record} = require('../db/models'); 
 const verification = require('../util/verification');
-const { error } = require('jquery');
 const COOKIE_NAME = 'auth_token';
-
 
 exports.Renderindex = async (req,res)=>{
     try{
@@ -11,79 +8,76 @@ exports.Renderindex = async (req,res)=>{
             attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
             raw: true
         });
-        const token = req.cookies[COOKIE_NAME]
-        let is_login = false
-        let userId = ""
-        // let memberships;
-        if(token){
-            verification(token).
-            then((user_id) => {
-                    userId = user_id
-                    is_login = true;
-                });
-            const memberships = await Club_member.findAll({
-                where:{
-                    M_id: userId
-                },
-                attributes:['C_id'],
-                raw:true
-            });
-            const memberClubIds = memberships.map(m => m.C_id);
 
-            // 為每個社團添加會員狀態
+        const token = req.cookies[COOKIE_NAME];
+        let is_login = false;
+        let user = null;
+        let memberClubIds = []
+
+        // 檢查 token 並獲取用戶 ID
+        if(token) {
+            try {
+                //驗證Token
+                user = await verification(token);
+                // 只有在用戶已登入的情況下才檢查社團成員資格
+                if (user) {
+                    is_login = true;
+                    const verify_memberships = await Club_sign_record.findAll({
+                        where:{
+                            M_id: user.userId,
+                            is_verify:true
+                        },
+                        attributes:['C_id','is_verify'],
+                        raw:true
+                    });
+                    const memberships = await Club_sign_record.findAll({
+                        where:{
+                            M_id: user.userId,
+                            is_verify:false
+                        },
+                        attributes:['C_id','is_verify'],
+                        raw:true
+                    });
+                    const verifymemberClubIds = verify_memberships.map(m => m.C_id);
+                    const memberClubIds = memberships.map(m => m.C_id);
+
+                    // 為每個社團添加會員狀態
+                    clubs.forEach(club => {
+                        club.isMember = verifymemberClubIds.includes(club.C_id);
+                        club.isVerify = memberClubIds.includes(club.C_id);
+                    });
+                }
+            } catch (verifyError) {
+                console.error('Token verification failed:', verifyError);
+                is_login = false;
+            }
+        }
+
+        // 如果用戶未登入，將所有社團的 isMember 設為 false
+        if (!is_login) {
             clubs.forEach(club => {
-                club.isMember = memberClubIds.includes(club.C_id);
+                club.isMember = false;
             });
         }
+
         res.render('index',{
             clubs:clubs,
             isLogin:is_login,
-            // userId:userId,
-            error:null,
-            success:null
+            userId: user.userId,
+            error:false,
+            success:false
+            // error:req.flash('error',false),
+            // success:req.flash('success',false)
         });
     }
     catch(e){
-        console.error('Error in getClubs:', e);
+        console.error('Error in Renderindex:', e);
         res.render('index',{
-            clubs:clubs,
-            isLogin:is_login,
-            // userId:userId,
+            clubs: [],
+            isLogin: false,
             error:"獲取社團列表失敗",
             success:null
         });
     }
 };
 
-exports.createClub = (req,res)=>{
-    const { name } = req.body;
-    console.log(req.body);
-    const newClub = indexModel.create({
-        name
-    });
-};
-
-exports.login = (req,res) =>{
-    const {account} = req.body;
-    let exist_account = indexModel.login(account);
-    console.log(exist_account);
-    if(exist_account != null){
-        const is_login = pwd === exist_account.M_pw?true:false
-    }
-    else{
-        return "Not Found";
-    }
-
-    if(is_login){
-        return {
-            "status":"is_login",
-            "account":exist_account.M_account,
-            "name":exist_account.M_name
-        }
-        // res.render()
-    }
-}
-
-exports.logout = (req,res)=>{
-
-}
