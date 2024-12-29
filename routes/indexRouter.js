@@ -1,33 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const indexController = require('../controllers/indexController.js');
 
+const indexController = require('../controllers/indexController');
 
+// 首頁顯示社團列表
+router.get('/', indexController.Renderindex);
 
+// 登入頁面
+router.get('/login', (req, res) => {
+    res.render('login', { error: req.flash('error') });
+});
 
-// router.get('/',indexController);
-router.get('/',indexController.getAllClubs
-    // res.render('index', {
-    //     game: 'Final Fantasy VII',
-    //     category: '<p><b>Characters:</b></p>',
-    //     characters: ['Cloud', 'Aerith', 'Tifa', 'Barret']
-    // });
-);
-
-router.post('/',indexController.createClub);
-
+// 註冊頁面
+router.get('/signup', (req, res) => {
+    res.render('signup', { error: false });
+});
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
