@@ -21,6 +21,9 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull:false
       },
+      Ch_attachment:{
+        type:Sequelize.STRING,
+      },
       Ch_update_at: {
         type: Sequelize.DATE,
         allowNull:false
