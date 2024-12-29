@@ -35,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING(50),
       allowNull:false
     },
+    Ch_attachment:{
+      type:DataTypes.STRING,
+    },
     Ch_update_at: {
       type:DataTypes.DATE,
       allowNull:false
@@ -47,7 +50,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Club_history',
     tableName: 'Club_histories',
-    timestamps: false
+    timestamps: false,
+    comment:'社團歷史資料'
   });
   return Club_history;
 };
