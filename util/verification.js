@@ -17,11 +17,10 @@ module.exports = function verifyToken(token){
                     reslove(tokenResult);
                     //正確
                 }else{
-                    tokenResult = decode.data;
+                    tokenResult = {userId:decode.userId,Permissions:decode.Permissions};
                     reslove(tokenResult);
                 }
-            })
+            });
         }
-    })
-
+    });
 };
