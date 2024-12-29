@@ -53,8 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Club_record',
     tableName: 'Club_records',
     timestamps:false,
-    updatedAt:false,
-    createdAt:false
+    comment:'活動社課參與紀錄'
   });
   return Club_record;
 };
