@@ -36,7 +36,7 @@ exports.Upload_history = async (req,res)=>{
             Ch_name:req.body.name,
             Ch_description:req.body.description,
             Ch_update_at:new Date(req.body.date),
-            // Ch_attachment:req.file ? `/uploads/histories/${req.file.filename}` : null,
+            Ch_attachment:req.file ? `/uploads/histories/${req.file.filename}` : null,
             C_id:req.params.id,
         });
         res.json({
