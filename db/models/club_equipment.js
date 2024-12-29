@@ -11,13 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Club__equipment.belongsTo(models.Club,{
+      Club_equipment.belongsTo(models.Club,{
         foreignKey:'C_id'
       });
-      Club__equipment.belongsTo(models.Member,{
+      Club_equipment.belongsTo(models.Member,{
         foreignKey:'Ce_admin'
       });
-      Club__equipment.belongsTo(models.Member,{
+      Club_equipment.belongsTo(models.Member,{
         foreignKey:'Ce_report'
       });
     }
@@ -71,7 +71,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Club_equipment',timestamps:false,
-    tableName:'Club__equipments'
+    tableName:'Club_equipments',
+    comment:'社團器材'
   });
   return Club_equipment;
 };
