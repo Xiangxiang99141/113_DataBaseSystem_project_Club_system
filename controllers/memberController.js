@@ -4,6 +4,7 @@ const encryptoion = require('../util/encryption');
 const Check = require('../util/check');
 const verification = require('../util/verification');
 const auth = require('../middleware/auth'); // 新增 auth 模組
+const { raw } = require('mysql2');
 require('dotenv').config();
 
 check = new Check();
@@ -102,7 +103,9 @@ exports.login = async (req, res) => {
             where: {
                 M_account: account,
                 M_pwd: hashpwd
-            }
+            },
+            raw:true,
+            nest:true
         });
 
         if (!member) {
@@ -122,7 +125,9 @@ exports.login = async (req, res) => {
                     attributes:['M_name'],
                     model:Member,
             }],
-            where:{M_id:member.M_id}
+            where:{M_id:member.M_id},
+            raw:true,
+            nest:true
         });
 
         member.Permissions = clubPermissions
@@ -151,9 +156,6 @@ exports.login = async (req, res) => {
 // 登出
 exports.logout = (req, res) => {
     // 清除所有相關的 cookies
-    res.clearCookie('token');
-    res.clearCookie('userId');
-    res.clearCookie('userName');
     
     // 清除 session（如果有使用的話）
     if (req.session) {
