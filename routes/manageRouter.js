@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { Club_member, Club_activity, Club_course, Club_meeting } = require('../db/models');
-const { Op } = require('sequelize');
+const { Club_member, Club_activity, Club_course, Club_meeting, Club_sign_record, Member} = require('../db/models');
+const { Op, Model } = require('sequelize');
 const MemberController = require('../controllers/memberController');
 const ManageController = require('../controllers/manageController');
 const ClubController = require('../controllers/clubController');
+const { raw } = require('mysql2');
+const util = require('../util/util');
 
 // 管理首頁
 router.get('/',ManageController.getview)
@@ -56,6 +58,30 @@ router.get('/meetings',
 // router.post('/meeting',ClubController.createMeeting);
 
 router.get('/equipment',ClubController.getEquipments);
+
+//顯示報名列表
+router.get('/signup',async (req,res)=>{
+    try {
+        let islogin = util.loginInfo(req.cookies['auth_token']);
+        const signup_list = await Club_sign_record.findAll({
+            include:[{
+                model:Member,
+                attribes:['M_name']
+            }],
+            nest:true,
+            raw:true,
+            
+        });
+        res.render('signup-list',{
+            signups:signup_list,
+            isLogin:islogin,
+            error:null,
+            success:null
+        })
+    } catch (error) {
+        res.render('error',{message:error})
+    }
+});
 
 
 module.exports = router;
