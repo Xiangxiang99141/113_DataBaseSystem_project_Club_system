@@ -6,19 +6,28 @@ const COOKIE_NAME = 'auth_token';
 exports.Renderindex = async (req,res)=>{
     let clubs;
     try{
-        if(req.query.type == undefined){
-            clubs = await Club.findAll({
-                attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
-                raw: true,
-            });
-        }else{
-            clubs = await Club.findAll({
-                attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
-                raw: true,
-                where:{
-                    C_type:req.query.type
-                }
-            });
+        //依照是否有篩選決定是否加入where
+        switch (req.query.type){
+            case '服務性':
+            case '學藝性':
+            case '體能性':
+            case '自治性':
+            case '康樂性':
+                clubs = await Club.findAll({
+                    attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
+                    raw: true,
+                    where:{
+                        C_type:req.query.type
+                    }
+                });
+                break;
+        
+            default:
+                clubs = await Club.findAll({
+                    attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
+                    raw: true,
+                });
+                break;
         }
 
         const token = req.cookies[COOKIE_NAME];
@@ -75,7 +84,7 @@ exports.Renderindex = async (req,res)=>{
         res.render('index',{
             clubs:clubs,
             isLogin:is_login,
-            userId: user.userId,
+            userId: user?user.userId:'',
             error:false,
             success:false
             // error:req.flash('error',false),
