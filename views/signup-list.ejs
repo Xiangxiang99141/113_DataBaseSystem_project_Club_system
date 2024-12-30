@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社團報名列表</title>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="./js/jquery.min.js"></script> 
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+</head>
+
+<body>
+    <%- include('layouts/header') %>
+
+    <div class="container mt-4">
+        <h2>社團報名列表</h2>
+        
+        <!-- 錯誤提示 -->
+        <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>
+        
+        <!-- 成功提示 -->
+        <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>會員名稱</th>
+                        <th>報名時間</th>
+                        <th>報名原因</th>
+                        <th>審核狀態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% signups.forEach(function(signup) { %>
+                    <tr>
+                        <td><%= signup.Member.M_name %></td>
+                        <td><%= new Date(signup.signup_at).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) %></td>
+                        <td><%= signup.signup_cause %></td>
+                        <td>
+                            <span class="badge <%= signup.isVerify ? 'bg-success' : 'bg-warning' %>">
+                                <%= signup.isVerify ? '已審核' : '待審核' %>
+                            </span>
+                        </td>
+                        <td>
+                            <% if (!signup.isVerify) { %>
+                            <button class="btn btn-sm btn-success" onclick="verifySignup('<%= signup.id %>', true)">
+                                通過
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="verifySignup('<%= signup.id %>', false)">
+                                拒絕
+                            </button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function verifySignup(signupId, isApproved) {
+            try {
+                const response = await fetch(`/api/signup/${signupId}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        isApproved: isApproved
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 重新載入頁面以更新狀態
+                    location.reload();
+                } else {
+                    alert(data.message || '操作失敗');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('操作過程中發生錯誤');
+            }
+        }
+    </script>
+
+    <%- include('layouts/footer') %>
+    <script src="./js/script.js"></script>
+</body>
+</html>
