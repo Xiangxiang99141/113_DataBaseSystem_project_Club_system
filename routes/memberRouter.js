@@ -7,7 +7,7 @@ const { isAuthenticated } = require('../middleware/auth');
 router.post('/register', memberController.createUser);
 router.post('/login', memberController.login);
 router.post('/login',isAuthenticated, memberController.login);
-router.post('/logout', isAuthenticated, memberController.logout);
+router.get('/logout', isAuthenticated, memberController.logout);
 router.put('/update', isAuthenticated, memberController.update);
 
 module.exports = router;
