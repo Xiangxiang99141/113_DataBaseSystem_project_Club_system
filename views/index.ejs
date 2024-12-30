@@ -58,7 +58,7 @@
                             <h5 class="card-title"><%= club.C_name %></h5>
                             <h6 class="card-subtitle mb-2 text-muted"><%= club.C_type %></h6>
                             <p class="card-text"><%= club.C_intro %></p>
-                            <% if (club.C_url) { %>
+                            <% if (club.C_web) { %>
                                 <p class="card-text">
                                     <small class="text-muted">
                                         社團網址：<a href="<%= club.C_web %>" target="_blank"><%= club.C_url %></a>
@@ -83,7 +83,7 @@
                                         <% } %>
                                     </button>
                                     <% } else { %>
-                                        <a class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#loginModal">登入後報名</a>
+                                        <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
                                         <% } %>
                         </div>
                     </div>
