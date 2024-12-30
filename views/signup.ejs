@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>社團管理系統</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-    </style>
 </head>
 <body>
 
@@ -33,18 +30,16 @@
                     <form id="signupForm" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="account" class="form-label">帳號 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="account" name="account" required
-                                   pattern="^[a-zA-Z0-9_]{4,20}$">
-                            <div class="invalid-feedback">
+                            <input type="text" class="form-control" id="account" name="account" required pattern="^[a-zA-Z0-9_]{4,20}$">
+                            <div class="invalid-feedback" id="account-invalid-feedback">
                                 帳號必須是4-20個字元，只能包含英文字母、數字和底線
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="name" class="form-label">姓名 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name" required
-                                   minlength="2" maxlength="20">
-                            <div class="invalid-feedback">
+                            <input type="text" class="form-control" id="name" name="name" required minlength="2" maxlength="20">
+                            <div class="invalid-feedback" id="name-invalid-feedback">
                                 姓名必須是2-20個字元
                             </div>
                         </div>
@@ -52,13 +47,12 @@
                         <div class="mb-3">
                             <label for="password" class="form-label">密碼 <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required
-                                       pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+                                <input type="password" class="form-control" id="password" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" id="pwd-invalid-feedback">
                                 密碼必須至少8個字元，包含至少一個字母和一個數字
                             </div>
                         </div>
@@ -68,19 +62,18 @@
                             <div class="input-group">
                                 <input type="password" class="form-control" id="confirmPassword" required>
                                 <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" id="cofp-invalid-feedback">
                                 密碼不一致
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">電話</label>
-                            <input type="tel" class="form-control" id="phone" name="phone"
-                                   pattern="^09\d{8}$">
-                            <div class="invalid-feedback">
+                            <input type="tel" class="form-control" id="phone" name="phone" pattern="^09\d{8}$">
+                            <div class="invalid-feedback" id="phone-invalid-feedback">
                                 請輸入有效的手機號碼（例如：0912345678）
                             </div>
                         </div>
@@ -88,7 +81,7 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email">
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" id="email-invalid-feedback">
                                 請輸入有效的 Email 地址
                             </div>
                         </div>
@@ -104,91 +97,6 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('signupForm');
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-
-    // 切換密碼可見性
-    function togglePasswordVisibility(inputId, buttonId) {
-        const input = document.getElementById(inputId);
-        const button = document.getElementById(buttonId);
-        button.addEventListener('click', function() {
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            button.querySelector('i').classList.toggle('bi-eye');
-            button.querySelector('i').classList.toggle('bi-eye-slash');
-        });
-    }
-
-    togglePasswordVisibility('password', 'togglePassword');
-    togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword');
-
-    // 表單驗證
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-        // 檢查密碼是否一致
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity('密碼不一致');
-        } else {
-            confirmPassword.setCustomValidity('');
-        }
-
-        if (!form.checkValidity()) {
-            event.stopPropagation();
-            form.classList.add('was-validated');
-            return;
-        }
-
-        try {
-            const formData = new FormData(form);
-            const response = await fetch('/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData))
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // 註冊成功，顯示成功訊息並重定向到登入頁面
-                alert('註冊成功！請登入。');
-                window.location.href = '/login';
-            } else {
-                // 顯示錯誤訊息
-                const alertHtml = `
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        ${result.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `;
-                form.insertAdjacentHTML('beforebegin', alertHtml);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            const alertHtml = `
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    註冊時發生錯誤，請稍後再試
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            form.insertAdjacentHTML('beforebegin', alertHtml);
-        }
-    });
-
-    // 即時密碼驗證
-    confirmPassword.addEventListener('input', function() {
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity('密碼不一致');
-        } else {
-            confirmPassword.setCustomValidity('');
-        }
-    });
-});
-</script>
+<script src="/js/signup.js"></script>
 
 <%- include('./layouts/footer') %>
