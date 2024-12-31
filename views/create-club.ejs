@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創建社團</title>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="./js/jquery.min.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+
+<body>
+    <%- include('layouts/header-index') %>
+
+    <div class="container mt-4">
+        <h2>創建新社團</h2>
+
+        <!-- 錯誤提示 -->
+        <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>
+        
+        <!-- 成功提示 -->
+        <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="createClubForm" method="POST" action="/api/club/create">
+                    <div class="mb-3">
+                        <label for="clubName" class="form-label">社團名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="clubName" name="name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="clubType" class="form-label">社團類型 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="clubType" name="type" required>
+                            <option value="">請選擇社團類型</option>
+                            <option value="服務性">服務性</option>
+                            <option value="學藝性">學藝性</option>
+                            <option value="體能性">體能性</option>
+                            <option value="自治性">自治性</option>
+                            <option value="康樂性">康樂性</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="clubIntro" class="form-label">社團介紹 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="clubIntro" name="intro" rows="4" maxlength="50" required></textarea>
+                        <div class="invalid-feedback" id="intro-invalid-feedback">社團介紹最多 50 個字元</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="clubQuota" class="form-label">社團名額 <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="clubQuota" name="quota" min="1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="clubWeb" class="form-label">社團網址</label>
+                        <input type="url" class="form-control" id="clubWeb" name="web" placeholder="https://example.com">
+                        <div class="form-text">選填，請輸入完整網址（包含 https:// 或 http://）</div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">創建社團</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('layouts/footer') %>
+    <script src="./js/create-club.js"></script>
+</body>
+</html>
