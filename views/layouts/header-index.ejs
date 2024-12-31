@@ -11,26 +11,34 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <% if (isLogin) { %>
                 <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/club/activity">社團活動</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/club/course">社團課程</a>
+                    </li>
+                </ul>  
+                <ul class="navbar-nav me-3 ms-auto">
+                <% if (isLogin) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/club?action=create">創建社團</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/manage">帳號管理</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/user/logout">登出</a>
                     </li>
-                </ul>
                 <% } else{%>
-                    <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" href="/login">登入</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/signup">註冊</a>
                         </li>
-                    </ul>
-                <% } %>
-                
+                        <% } %>
+                </ul>
             </div>
         </div>
     </nav>
