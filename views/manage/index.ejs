@@ -1,109 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社團管理系統</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</head>
+
 <%- include('../layouts/header') %>
 
 <div class="container mt-4">
-    <h1 class="text-center mb-5">社團管理系統</h1>
-
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- 社員管理卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-people fs-1 mb-3"></i>
-                    <h5 class="card-title">社員管理</h5>
-                    <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
-                    <a href="/manage/members" class="btn btn-primary">進入管理</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 活動管理卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-calendar-event fs-1 mb-3"></i>
-                    <h5 class="card-title">活動管理</h5>
-                    <p class="card-text">規劃及管理社團活動、報名系統及活動記錄</p>
-                    <a href="/manage/activities" class="btn btn-primary">進入管理</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 社課管理卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-book fs-1 mb-3"></i>
-                    <h5 class="card-title">社課管理</h5>
-                    <p class="card-text">安排社課時間、內容及出席記錄</p>
-                    <a href="/manage/courses" class="btn btn-primary">進入管理</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 會議管理卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-chat-square-text fs-1 mb-3"></i>
-                    <h5 class="card-title">會議管理</h5>
-                    <p class="card-text">記錄社團會議內容及決議事項</p>
-                    <a href="/manage/meetings" class="btn btn-primary">進入管理</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 器材管理卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-tools fs-1 mb-3"></i>
-                    <h5 class="card-title">器材管理</h5>
-                    <p class="card-text">管理社團器材的借用及維護記錄</p>
-                    <a href="/manage/equipment" class="btn btn-primary">進入管理</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 系統設定卡片 -->
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-gear fs-1 mb-3"></i>
-                    <h5 class="card-title">系統設定</h5>
-                    <p class="card-text">管理系統設定及權限配置</p>
-                    <a href="/manage/settings" class="btn btn-primary">進入設定</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <h1 class="text-center mb-5">會員資訊</h1>
+    
     <!-- 快速統計資訊 -->
-    <div class="row mt-5">
-        <div class="col-md-4">
+    <div class="row">
+        <div class="col-md-3">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h5 class="card-title">社員總數</h5>
-                    <p class="card-text display-4"><%= memberCount %></p>
+                    <h5 class="card-title">已報名社團</h5>
+                    <p class="card-text display-4"><%= isverify_clubCount %></p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">審核中社團</h5>
+                    <p class="card-text display-4"><%= clubCount %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card bg-success text-white">
                 <div class="card-body">
-                    <h5 class="card-title">本月活動數</h5>
+                    <h5 class="card-title">參加活動數</h5>
                     <p class="card-text display-4"><%= activityCount %></p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card bg-info text-white">
                 <div class="card-body">
-                    <h5 class="card-title">本月社課數</h5>
+                    <h5 class="card-title">參加社課數</h5>
                     <p class="card-text display-4"><%= courseCount %></p>
                 </div>
             </div>
         </div>
     </div>
+    
+
+    
+    <!-- 擁有權限的社團 -->
+    <div class="row">
+        <div class="col-md-4">
+            <h5 class="mt-2">您可以管理的社團</h4>
+                    <div class="row">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people fs-1 mb-3"></i>
+                                <h5 class="card-title"></h5>
+                                <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
+                                <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+        <div class="col-md-4">
+            <h5 class="mt-2">已報名社團的社團</h4>
+            <div class="row">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-1 mb-3"></i>
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
+                        <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h5 class="mt-2">審核中的社團</h4>
+            <!-- 社員列表卡片 -->  
+            <div class="row">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-1 mb-3"></i>
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
+                        <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+
+
 </div>
 
 <%- include('../layouts/footer') %>
+</html>
