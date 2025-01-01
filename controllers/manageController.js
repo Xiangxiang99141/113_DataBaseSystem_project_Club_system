@@ -21,12 +21,14 @@ exports.getview = async (req,res) => {
             const {count:is_verify_count,rows:is_verify_row} = await Club_sign_record.findAndCountAll({
                 where:{
                     M_id:user.userId,
-                    is_verify:false
+                    is_verify:true
                 },
                 include:[{
                     model:Club,
                     attributes: ['C_id', 'C_name', 'C_type'],
                 }],
+                nest:true,
+                raw:true
             });
             const {count:verify_count,rows:verify_row} = await Club_sign_record.findAndCountAll({
                 where:{
@@ -37,16 +39,16 @@ exports.getview = async (req,res) => {
                     model:Club,
                     attributes: ['C_id', 'C_name', 'C_type'],
                 }],
+                nest:true,
+                raw:true
             });
-    
-    
-    
+
             res.render('manage/index',{
                 isverify_clubCount:is_verify_count || 0,
                 clubCount:verify_count || 0,
                 activityCount:0,
                 courseCount:0,
-                admin_club:0,
+                admin_club:[],
                 is_verify_club:is_verify_row,
                 verify_club:verify_row
             });
