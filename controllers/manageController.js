@@ -1,27 +1,60 @@
-const { Club_member, Club_activity, Club_course, Club_meeting } = require('../db/models');
-const {Op} = require('sequelize')
-// const verification = require('../util/verification');
-const util = require('../util/util');
+const { Club_member, Club_activity, Club_course,Club_sign_record, Club} = require('../db/models');
+const {Op, where} = require('sequelize');
+const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
 
 
-exports.getview = (req,res) => {
+exports.getview = async (req,res) => {
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try{
+            HasAdmin(req.query.id).then(result=>{
+                res.render('manage/Admin_index',result);
+            });
+        }catch(error){
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        };
+    }
+    else{
+        try{
+            const {count:is_verify_count,rows:is_verify_row} = await Club_sign_record.findAndCountAll({
+                where:{
+                    M_id:user.userId,
+                    is_verify:false
+                },
+                include:[{
+                    model:Club,
+                    attributes: ['C_id', 'C_name', 'C_type'],
+                }],
+            });
+            const {count:verify_count,rows:verify_row} = await Club_sign_record.findAndCountAll({
+                where:{
+                    M_id:user.userId,
+                    is_verify:false
+                },
+                include:[{
+                    model:Club,
+                    attributes: ['C_id', 'C_name', 'C_type'],
+                }],
+            });
     
-    // const token = req.cookies[COOKIE_NAME];
-    // if(token){
-    //     verification(token).then(user=>{
-    //     })
-    // };
-    const islogin = util.loginInfo(req.cookies[COOKIE_NAME]);
-
-    try{
-        HasAdmin(req.query.id).then(result=>{
-            res.render('manage/Admin_index',result);
-        });
-    }catch(error){
-        console.error('Error:', error);
-        res.status(500).send('Server Error');
-    };
+    
+    
+            res.render('manage/index',{
+                isverify_clubCount:is_verify_count || 0,
+                clubCount:verify_count || 0,
+                activityCount:0,
+                courseCount:0,
+                admin_club:0,
+                is_verify_club:is_verify_row,
+                verify_club:verify_row
+            });
+        }catch(error){
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        };
+    }
 };
 
 
