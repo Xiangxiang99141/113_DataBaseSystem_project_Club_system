@@ -56,43 +56,49 @@
     <div class="row">
         <div class="col-md-4">
             <h5 class="mt-2">您可以管理的社團</h4>
+                <% admin_club.forEach(club => { %>
                     <div class="row">
                         <div class="card h-100">
-                            <div class="card-body text-center">
-                                <i class="bi bi-people fs-1 mb-3"></i>
-                                <h5 class="card-title"></h5>
-                                <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
-                                <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                            <div class="card-header">
+                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/manage?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                             </div>
                         </div>
                     </div>
+                <% }) %>
         </div>
         <div class="col-md-4">
             <h5 class="mt-2">已報名社團的社團</h4>
-            <div class="row">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people fs-1 mb-3"></i>
-                        <h5 class="card-title"></h5>
-                        <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
-                        <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                <% is_verify_club.forEach(club => { %>
+                    <div class="row">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/club/info?<%= club.C_id %>" class="btn btn-primary">查看社團</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                <% }) %>
         </div>
         <div class="col-md-4">
             <h5 class="mt-2">審核中的社團</h4>
-            <!-- 社員列表卡片 -->  
-            <div class="row">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people fs-1 mb-3"></i>
-                        <h5 class="card-title"></h5>
-                        <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
-                        <a href="/manage?id" class="btn btn-primary">進入管理</a>
+                <% verify_club.forEach(club => { %>
+                    <div class="row">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/club/info?<%= club.C_id %>" class="btn btn-primary">查看社團</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                <% }) %>
+            
         </div>
     </div>
     
