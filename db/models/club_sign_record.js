@@ -6,7 +6,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Club_sign_record.belongsTo(models.Member,{
         foreignKey: "M_id"
-      })
+      });
+      Club_sign_record.belongsTo(models.Club,{
+        foreignKey: "C_id"
+      });
     }
   }
   Club_sign_record.init({
