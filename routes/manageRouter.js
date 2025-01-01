@@ -7,9 +7,10 @@ const ManageController = require('../controllers/manageController');
 const ClubController = require('../controllers/clubController');
 const { raw } = require('mysql2');
 const util = require('../util/util');
+const {isAuthenticated} = require('../middleware/auth');
 
 // 管理首頁
-router.get('/',ManageController.getview)
+router.get('/', isAuthenticated, ManageController.getview)
 
 // 社員管理
 router.get('/members', MemberController.getview);
