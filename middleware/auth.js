@@ -35,7 +35,6 @@ exports.clearAuthCookie = (res) => {
 exports.isAuthenticated = (req, res, next) => {
     try {
         if(!req.cookies[COOKIE_NAME]){
-            console.log('....logout?')
             req.flash('success',false);
             req.flash('error','請先登入');
             res.redirect('/login');
