@@ -52,53 +52,124 @@
     
 
     
-    <!-- 擁有權限的社團 -->
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-md-4">
-            <h5 class="mt-2">您可以管理的社團</h4>
-                <% admin_club.forEach(club => { %>
-                    <div class="row">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
-                            </div>
-                            <div class="card-footer">
-                                <a href="/manage?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
-                            </div>
-                        </div>
+            <!-- 擁有權限的社團 -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header">
+                        <span class="fw-bold">您可以管理的社團</span>
                     </div>
-                <% }) %>
+                    <div class="card-body">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>社團類型</th>
+                                    <th>社團名稱</th>
+                                    <th>功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (admin_club.length !=0) { %>
+                                    <% admin_club.forEach(club => { %>
+                                    <tr>
+                                        <td><%= club.Club.C_type %></td>
+                                        <td><%= club.Club.C_name %></td>
+                                        <td>
+                                            <a href="/club/info/<%= club.C_id %>" class="btn btn-primary btn-sm">查看社團</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                <% }else{ %>
+                                    <tr>
+                                        <td colspan="3">
+                                            <span class="badge bg-warning text-dark">您沒有可以管理的社團</span>
+                                        </td>
+                                    </tr>
+                                <% }  %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-4">
-            <h5 class="mt-2">已報名社團的社團</h4>
-                <% is_verify_club.forEach(club => { %>
-                    <div class="row">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
-                            </div>
-                            <div class="card-footer">
-                                <a href="/club/info?<%= club.C_id %>" class="btn btn-primary">查看社團</a>
-                            </div>
-                        </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header">
+                        <span class="fw-bold">已報名的社團</span>
                     </div>
-                <% }) %>
+                    <div class="card-body">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>社團類型</th>
+                                    <th>社團名稱</th>
+                                    <th>功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (is_verify_club.length !=0) { %>
+                                    <% is_verify_club.forEach(club => { %>
+                                    <tr class="align-middle"">
+                                        <td><%= club.Club.C_type %></td>
+                                        <td><%= club.Club.C_name %></td>
+                                        <td>
+                                            <a href="/club/info/<%= club.C_id %>" class="btn btn-primary btn-sm">查看社團</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                <% }else{ %>
+                                    <tr>
+                                        <td colspan="3">
+                                            <span class="badge bg-warning text-dark">您沒有已通過的社團</span>
+                                        </td>
+                                    </tr>
+                                <% }  %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-4">
-            <h5 class="mt-2">審核中的社團</h4>
-                <% verify_club.forEach(club => { %>
-                    <div class="row">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <%= club.Club.C_name %> <span class="badge bg-info text-dark"><%= club.Club.C_type %></span>
-                            </div>
-                            <div class="card-footer">
-                                <a href="/club/info?<%= club.C_id %>" class="btn btn-primary">查看社團</a>
-                            </div>
-                        </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header">
+                        <span class="fw-bold">審核中的社團</span>
                     </div>
-                <% }) %>
-            
+                    <div class="card-body">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>社團類型</th>
+                                    <th>社團名稱</th>
+                                    <th>功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (verify_club.length !=0) { %>
+                                    <% verify_club.forEach(club => { %>
+                                    <tr class="align-middle"">
+                                        <td><%= club.Club.C_type %></td>
+                                        <td><%= club.Club.C_name %></td>
+                                        <td>
+                                            <a href="/club/info/<%= club.C_id %>" class="btn btn-primary btn-sm">查看社團</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                <% }else{ %>
+                                    <tr>
+                                        <td colspan="3">
+                                            <span class="badge bg-warning text-dark">您沒有未通過的社團</span>
+                                        </td>
+                                    </tr>
+                                <% }  %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
