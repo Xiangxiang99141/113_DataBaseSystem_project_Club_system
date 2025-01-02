@@ -42,6 +42,8 @@
 
 ## 保險紀錄(insurance)表
 `npx sequelize-cli model:generate --name Insurance --attributes Ins_id:integer,Ins_isadult:boolean,Ins_idcard:string,Ins_engname:string,Ins_nationality:enum,Ins_idcardimg:string,Ins_birthday:DATEONLY,Ins_liaison:string,Ins_liaison_phone:string`
+## 保險正反面紀錄(insurance_img)表
+`npx sequelize-cli model:generate --name Insurance_img --attributes Insimg_id:integer,front:string,obverse:string,Ins_id:integer`
 
 ## 交通紀錄(transportation)表
 `npx sequelize-cli model:generate --name Transportation --attributes Ts_id:integer,Ts_method:enum`
