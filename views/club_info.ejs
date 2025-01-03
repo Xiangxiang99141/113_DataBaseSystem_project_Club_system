@@ -20,6 +20,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">
+            <a href="/" class="btn btn-outline-primary btn-lg"><i class="fa-solid fa-circle-arrow-left"></i>回首頁</a>
             <i class="fas fa-users"></i> 社團資訊
         </h1>
 
@@ -31,40 +32,29 @@
                         <i class="fas fa-calendar-alt"></i> 社團活動
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">最新活動</h5>
+                        <h5 class="card-title">活動列表</h5>
                         <ul class="list-group">
                             <% courses.forEach((course) => { %>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div class="col-md-10">
+                                    <div>
                                         <%= course.Cc_name %>
                                     </div>
-                                    <div class="col-md-2">
-                                        <% switch (course.Cc_status) {%>
-                                            <% case '已結束': %>
-                                                <span class="badge bg-secondary">已結束</span>
-                                                <% break %>
-                                            <% case '報名中': %>
-                                                <span class="badge bg-info">報名中</span>
-                                                <% break %>
-                                            <% case '即將開始': %>
-                                                <span class="badge bg-success">即將開始</span>
-                                                <% break %>
-                                            <% default: %>
-                                                <span class="badge bg-warning">伊囉了</span>
-                                                <% break %>
-                                            <% } %>
-                                    </div>
+                                    <% switch (course.Cc_status) {
+                                        case '已結束' : %>
+                                            <span class="badge bg-secondary">報名已結束</span>
+                                            <% break;
+                                        case '報名中' : %>
+                                            <span class="badge bg-info">報名中</span>
+                                            <% break;
+                                        case '即將開始' : %>
+                                            <span class="badge bg-success">即將開始</span>
+                                            <% break;
+                                        default : %>
+                                            <span class="badge bg-warning">伊囉了</span>
+                                            <% break;
+                                    }; %>
                                 </li>
                             <% }); %>
-                            
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                技能工作坊
-                                <span class="badge bg-info">報名中</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                年度聚會
-                                <span class="badge bg-secondary">已結束</span>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -79,21 +69,22 @@
                     <div class="card-body">
                         <h5 class="card-title">課程列表</h5>
                         <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">攝影入門課程</h6>
-                                    <small>週六上午</small>
-                                </div>
-                                <p class="mb-1">適合初學者的專業攝影技巧課程</p>
-                                <small>地點：G301</small>
-                            </a>
-                            
+                            <% activities.forEach((activity) => { %>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1"><%= activity.Ca_name %></h6>
+                                        <small><%= activity.Ca_date %></small>
+                                    </div>
+                                    <p class="mb-1"><%= activity.Ca_content %></p>
+                                    <small>地點：<%= activity.Ca_location %></small>
+                                </a>
+                            <% }); %>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 參加人數卡片 -->
+            <!-- 社團詳細資訊卡片 -->
             <div class="col-md-4 mb-4">
                 <div class="card club-card">
                     <div class="card-header bg-warning text-white">
