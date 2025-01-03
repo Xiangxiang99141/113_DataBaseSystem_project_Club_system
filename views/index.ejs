@@ -75,20 +75,25 @@
                             </div>
                             <div class="card-footer bg-transparent border-top-0">
                                 <% if (isLogin) { %>
-                                    <button class="btn btn-primary w-100"
-                                    <% if(!club.isMember || !club.isVerify){ %> 
-                                        onclick="applyClub('<%= club.C_id %>', '<%= userId %>')"
-                                        <% } %>
-                                            <%= (club.isMember||club.isVerify) ? 'disabled' : '' %>>
-                                            <% if (club.isMember || club.isVerify) { %>
-                                                <%= club.isMember ? '查看社團' : '審核中' %>
-                                                <% } else { %>
-                                                    <%= '報名' %>
-                                            <% } %>
-                                        </button>
-                                        <% } else { %>
-                                            <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
-                                            <% } %>
+                                    <% if(!club.isMember && !club.isVerify){ %>
+                                        <div class="btn-group  w-100" role="group" aria-label="Basic mixed styles example">
+                                            <button class="btn btn-primary"
+                                            onclick="applyClub('<%= club.C_id %>', '<%= userId %>')">
+                                            報名
+                                            </button>
+                                            <a class="btn btn-outline-primary" href="/club/info/<%= club.C_id %>">
+                                                查看社團
+                                            </a>
+                                        </div>
+                                    <% }else{ %>
+                                        <a class="btn btn-primary w-100" href="/club/info/<%= club.C_id %>">
+                                            <%= club.isMember ? '查看社團' : '審核中' %>
+                                        </a>
+                                    <% } %>
+                                        
+                                <% } else { %>
+                                    <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
