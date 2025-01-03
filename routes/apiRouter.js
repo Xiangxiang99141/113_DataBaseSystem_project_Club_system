@@ -160,7 +160,7 @@ router.get('/clubs', clubController.getClubs);
 router.post('/club/:id/signUp',  clubController.signupClub);
 
 //查看社團報名列表
-router.get('/club/:id/signUpMember', clubController.getSignUpMember);
+router.get('/club/:id/signUpMember', clubController.getSignupMembers);
 
 //社團成員
 //查詢
