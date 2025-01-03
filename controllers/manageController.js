@@ -18,10 +18,10 @@ exports.getview = async (req,res) => {
     }
     else{
         try{
-            const {count:is_verify_count,rows:is_verify_row} = await Club_sign_record.findAndCountAll({
+            const {count:is_admin_count,rows:is_admin_row} = await Club_member.findAndCountAll({
                 where:{
                     M_id:user.userId,
-                    is_verify:true
+                    Cme_job:{[Op.in]:['社長','副社長',"幹部","社團指導老師"]}
                 },
                 include:[{
                     model:Club,
@@ -30,6 +30,21 @@ exports.getview = async (req,res) => {
                 nest:true,
                 raw:true
             });
+            const {count:is_member_count,rows:is_member_row} =  await Club_member.findAndCountAll({
+                where:{
+                    M_id:user.userId,
+                    Cme_job:"社員"
+                },
+                include:[{
+                    model:Club,
+                    attributes: ['C_id', 'C_name', 'C_type'],
+                }],
+                nest:true,
+                raw:true
+            }) 
+
+
+
             const {count:verify_count,rows:verify_row} = await Club_sign_record.findAndCountAll({
                 where:{
                     M_id:user.userId,
@@ -44,12 +59,13 @@ exports.getview = async (req,res) => {
             });
 
             res.render('manage/index',{
-                isverify_clubCount:is_verify_count || 0,
+                is_member_clubCount:is_member_count || 0,
                 clubCount:verify_count || 0,
                 activityCount:0,
                 courseCount:0,
-                admin_club:[],
-                is_verify_club:is_verify_row,
+                admin_club_count:is_admin_count,
+                admin_club:is_admin_row,
+                is_member_club:is_member_row,
                 verify_club:verify_row
             });
         }catch(error){
