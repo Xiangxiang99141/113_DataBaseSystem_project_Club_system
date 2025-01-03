@@ -150,115 +150,17 @@ router.post('/signup', async (req, res) => {
 });
 
 // 社團相關 API
-router.post('/club/create', async (req, res) => {
-    try {
-        const club = await Club.create({
-            C_name: req.body.name,
-            C_type: req.body.type,
-            C_intro: req.body.intro,
-            C_web: req.body.web||null,
-            C_quota: req.body.quota,
-            C_colse: false,
-            C_created_at: new Date(),
-            C_update_at: new Date(),
-        });
+//創建社團
+router.post('/club/create', clubController.createClub);
 
-        res.json({
-            success: true,
-            message: '社團創建申請成功',
-            data: club
-        });
-
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message || '社團創建申請失敗'
-        });
-    }
-});
-
-router.get('/clubs', async (req, res) => {
-    try {
-        const clubs = await Club.findAll();
-        res.status(200).json({ 
-            success: true, 
-            message: '社團獲取成功',
-            clubs: clubs 
-        });
-
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: error.message || '社團查詢失敗' 
-        });
-    }
-});
+//獲取社團列表
+router.get('/clubs', clubController.getClubs);
 
 // 社團報名
-router.post('/club/:id/signUp',  async (req, res) => {
-    try {
-        const signup = await Club_sign_record.create({
-            // M_id: req.user.M_id,
-            M_id:req.body.userId,
-            C_id: req.params.id,
-            signup_cause: req.body.cause,
-            signup_at: new Date(),
-            is_verify:false
-        });
-
-        res.json({
-            success: true,
-            message: '您的報名已提交，請待幹部審核',
-            data: signup
-        });
-
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message || '報名失敗'
-        });
-    }
-});
+router.post('/club/:id/signUp',  clubController.signupClub);
 
 //查看社團報名列表
-router.get('/club/:id/signUpMember', async (req, res) => {
-    try {
-        const signups = await Club_sign_record.findAll({
-            attributes:['signup_cause','is_verify','not_verify_cause'],
-            raw: true, // 使用原始查詢結果
-            nest: true, // 巢狀結果
-            where: {
-                C_id: req.params.id
-            },
-            include: [{
-                model: Member,
-                attributes: ['M_name', 'M_account', 'email', 'M_phone']
-            }]
-        });
-
-        // 格式化日期
-        const formattedSignups = signups.map(signup => ({
-            ...signup,
-            signup_at: signup.signup_at ? new Date(signup.signup_at).toLocaleString() : null
-        }));
-
-        res.json({
-            success: true,
-            message: '申請列表查詢成功',
-            data: formattedSignups
-        });
-
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message || '查詢失敗'
-        });
-    }
-});
+router.get('/club/:id/signUpMember', clubController.getSignUpMember);
 
 //社團成員
 //查詢
