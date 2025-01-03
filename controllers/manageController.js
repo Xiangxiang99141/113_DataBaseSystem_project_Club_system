@@ -6,80 +6,85 @@ const COOKIE_NAME = 'auth_token';
 
 exports.getview = async (req,res) => {
     user = await verification(req.cookies[COOKIE_NAME]);
-    if(req.query.id){
-        try{
-            HasAdmin(user.userId,req.query.id).then((isAdmin)=>{
-                if(isAdmin){
-                    getDetail(req.query.id).then((result)=>{
-                        res.render('manage/Admin_index',result);
-                    })
-                }else{
-                    res.render('error',{
-                        message:"權限不足"
-                    });
-                }
-            });
-        }catch(error){
-            console.error('Error:', error);
-            res.status(500).send('Server Error');
-        };
-    }
-    else{
-        try{
-            const {count:is_admin_count,rows:is_admin_row} = await Club_member.findAndCountAll({
-                where:{
-                    M_id:user.userId,
-                    Cme_job:{[Op.in]:['社長','副社長',"幹部","社團指導老師"]}
-                },
-                include:[{
-                    model:Club,
-                    attributes: ['C_id', 'C_name', 'C_type'],
-                }],
-                nest:true,
-                raw:true
-            });
-            const {count:is_member_count,rows:is_member_row} =  await Club_member.findAndCountAll({
-                where:{
-                    M_id:user.userId,
-                    Cme_job:"社員"
-                },
-                include:[{
-                    model:Club,
-                    attributes: ['C_id', 'C_name', 'C_type'],
-                }],
-                nest:true,
-                raw:true
-            }) 
-
-
-
-            const {count:verify_count,rows:verify_row} = await Club_sign_record.findAndCountAll({
-                where:{
-                    M_id:user.userId,
-                    is_verify:false
-                },
-                include:[{
-                    model:Club,
-                    attributes: ['C_id', 'C_name', 'C_type'],
-                }],
-                nest:true,
-                raw:true
-            });
-
-            res.render('manage/index',{
-                is_member_clubCount:is_member_count || 0,
-                clubCount:verify_count || 0,
-                activityCount:0,
-                courseCount:0,
-                admin_club_count:is_admin_count,
-                admin_club:is_admin_row,
-                is_member_club:is_member_row,
-                verify_club:verify_row
-            });
-        }catch(error){
-            console.error('Error:', error);
-            res.status(500).send('Server Error');
-        };
+    if(user){
+        if(req.query.id){
+            try{
+                HasAdmin(user.userId,req.query.id).then((isAdmin)=>{
+                    if(isAdmin){
+                        getDetail(req.query.id).then((result)=>{
+                            res.render('manage/Admin_index',result);
+                        })
+                    }else{
+                        res.render('error',{
+                            message:"權限不足"
+                        });
+                    }
+                });
+            }catch(error){
+                console.error('Error:', error);
+                res.status(500).send('Server Error');
+            };
+        }
+        else{
+            try{
+                const {count:is_admin_count,rows:is_admin_row} = await Club_member.findAndCountAll({
+                    where:{
+                        M_id:user.userId,
+                        Cme_job:{[Op.in]:['社長','副社長',"幹部","社團指導老師"]}
+                    },
+                    include:[{
+                        model:Club,
+                        attributes: ['C_id', 'C_name', 'C_type'],
+                    }],
+                    nest:true,
+                    raw:true
+                });
+                const {count:is_member_count,rows:is_member_row} =  await Club_member.findAndCountAll({
+                    where:{
+                        M_id:user.userId,
+                        Cme_job:"社員"
+                    },
+                    include:[{
+                        model:Club,
+                        attributes: ['C_id', 'C_name', 'C_type'],
+                    }],
+                    nest:true,
+                    raw:true
+                }) 
+    
+    
+    
+                const {count:verify_count,rows:verify_row} = await Club_sign_record.findAndCountAll({
+                    where:{
+                        M_id:user.userId,
+                        is_verify:false
+                    },
+                    include:[{
+                        model:Club,
+                        attributes: ['C_id', 'C_name', 'C_type'],
+                    }],
+                    nest:true,
+                    raw:true
+                });
+    
+                res.render('manage/index',{
+                    isLogin:true,
+                    is_member_clubCount:is_member_count || 0,
+                    clubCount:verify_count || 0,
+                    activityCount:0,
+                    courseCount:0,
+                    admin_club_count:is_admin_count,
+                    admin_club:is_admin_row,
+                    is_member_club:is_member_row,
+                    verify_club:verify_row
+                });
+            }catch(error){
+                console.error('Error:', error);
+                res.status(500).send('Server Error');
+            };
+        }
+    }else{
+        res.redirect('/login');
     }
 };
 
