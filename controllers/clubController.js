@@ -1,8 +1,15 @@
 const { raw } = require('mysql2');
-const { Club, Club_member, Member, Club_meeting, Club_equipment} = require('../db/models');
+const { Club, 
+    Club_member,
+    Member,
+    Club_meeting,
+    Club_equipment,
+    Club_activity,
+    Club_course} = require('../db/models');
 const { Op, where, Model } = require('sequelize');
 const { cache } = require('ejs');
 const e = require('connect-flash');
+const moment = require('moment');
 
 // 獲取所有社團
 exports.getClubs = async ()=>{
@@ -182,6 +189,149 @@ exports.getEquipments = (req,res)=>{
     }catch{
 
     }
+}
+
+//獲取社團路由首頁
+exports.getHome = async (req,res)=>{
+    let is_login = false;
+    let user = null;
+    switch(req.query.action){
+        case 'create':
+            if(req.cookies[COOKIE_NAME]){
+                const token = req.cookies[COOKIE_NAME];
+                user = await verification(token);
+                if(user){
+                    is_login = true
+                }
+                res.render('create-club',{
+                isLogin:is_login,
+                error:null,
+                success:null
+            });
+            }else{
+                res.redirect('/login');
+            }
+            break;
+        default:
+            res.render('error',{message:"你以為這裡有東西嗎\n想的美😛😛"});
+            break;
+    }
+}
+
+//獲取社團資訊
+exports.getInfoHome = async (req,res) => {
+    try {
+        res.render('error',{message:"你以為這裡有東西嗎\n想的美😛😛"});
+    } catch (error) {
+        console.error('Error in getClub info:', error);
+        res.status(500).json({
+            success: false,
+            message: '社團資訊獲取失敗'
+        });
+    }
+}
+exports.getInfo = async (req,res) => {
+    try {
+        //使用社團ID找尋社團
+        const club = await Club.findByPk(req.params.id,{
+            include:[{
+                model:Member,
+                attributes:['M_name'],
+                through:{
+                    where:{Cme_job:"社長"},
+                    attributes:['Cme_job']
+                }
+            }],
+            nest:true,
+            raw:true
+        });
+        club.C_created_at = moment(club.C_created_at).format('YYYY-MM-DD');
+
+        //獲取社團活動
+        const {count:activity_count,rows:activity_rows} = await Club_activity.findAndCountAll({
+            attributed:['Ca_id','Ca_name','Ca_content','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
+            where:{
+                C_id:req.params.id
+            },
+            nest:true,
+            raw:true
+        });
+        
+        //獲取社團課程
+        const {count:course_count,rows:course_rows} = await Club_course.findAndCountAll({
+            attributed:['Cc_id','Cc_name','Cc_content','Cc_location','Cc_date','Cc_quota','Cc_open_at','Cc_close_at'],
+            where:{
+                C_id:req.params.id
+            },
+            nest:true,
+            raw:true
+        });
+
+        //獲取成員人數
+        const member_count = await Club_member.count({
+            where:{
+                C_id:req.params.id
+            }
+        });
+
+        //將陣列重新映射成包含是否可以報名
+        const activities = activity_rows.map((activity) => {
+            return {
+                Ca_id:activity.Ca_id,
+                Ca_name:activity.Ca_name,
+                Ca_content:activity.Ca_content,
+                Ca_location:activity.Ca_location,
+                Ca_date:covertDate(activity.Ca_date),
+                Ca_quota:activity.Ca_quota,
+                Ca_status: isStrat(activity.Ca_open_at,activity.Ca_close_at,activity.Ca_date)
+            }
+        });
+
+        const courses = course_rows.map((course) => {
+            return {
+                Cc_id:course.Cc_id,
+                Cc_name:course.Cc_name,
+                Cc_content:course.Cc_content,
+                Cc_location:course.Cc_location,
+                Cc_date:course.Cc_date,
+                Cc_quota:course.Cc_quota,
+                Cc_status: isStrat(course.Cc_open_at,course.Cc_close_at,course.Cc_date)
+            }
+        });
+
+        res.render('club_info',{
+            club:club,
+            activities:activities || [],
+            courses:courses || [],
+            member_count:member_count || 0,
+            activities_count:activity_count || 0,
+            courses_count:course_count || 0,
+        });
+    } catch (error) {
+        console.error('Error in getClub info:', error);
+        res.status(500).json({
+            success: false,
+            message: '社團資訊獲取失敗'
+        });
+    }
+}
+
+//判斷活動是否可報名
+//時間內可報名，當天顯示即將開始
+function isStrat(open,close,date){
+    if(Date.now() >= open && Date.now() <= close){
+        return "報名中";
+    }else if(Date.now()>= close){
+        return "已結束"
+    }else if(Date.now() == date){
+        return "即將開始"
+    }
+}
+
+
+//轉換時間格式
+function covertDate(date){
+    return moment(date).format('YYYY-MM-DD dddd');
 }
 
 async function getmeetings(clubId=null){
