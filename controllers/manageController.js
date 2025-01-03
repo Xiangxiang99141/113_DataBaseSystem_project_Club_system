@@ -6,7 +6,6 @@ const COOKIE_NAME = 'auth_token';
 
 exports.getview = async (req,res) => {
     user = await verification(req.cookies[COOKIE_NAME]);
-    if(user){
         if(req.query.id){
             try{
                 HasAdmin(user.userId,req.query.id).then((isAdmin)=>{
@@ -83,9 +82,6 @@ exports.getview = async (req,res) => {
                 res.status(500).send('Server Error');
             };
         }
-    }else{
-        res.redirect('/login');
-    }
 };
 
 
