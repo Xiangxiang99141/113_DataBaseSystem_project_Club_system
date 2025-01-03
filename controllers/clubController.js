@@ -10,37 +10,53 @@ const { Op, where, Model } = require('sequelize');
 const { cache } = require('ejs');
 const e = require('connect-flash');
 const moment = require('moment');
+const COOKIE_NAME = 'auth_token';
+const verification = require('../util/verification');
 
 // 獲取所有社團
-exports.getClubs = async ()=>{
-        const clubs = await Club.findAll({
-            attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
-            raw: true
+exports.getClubs = async (req, res) => {
+    try {
+        const clubs = await Club.findAll();
+        res.status(200).json({ 
+            success: true, 
+            message: '社團獲取成功',
+            clubs: clubs 
         });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: error.message || '社團查詢失敗' 
+        });
+    }
 }
 
 // 創建社團
 exports.createClub = async (req, res) => {
     try {
-        const { name, type, intro, quota } = req.body;
-        
         const club = await Club.create({
-            C_name: name,
-            C_type: type,
-            C_intro: intro,
-            C_quota: quota
+            C_name: req.body.name,
+            C_type: req.body.type,
+            C_intro: req.body.intro,
+            C_web: req.body.web||null,
+            C_quota: req.body.quota,
+            C_colse: false,
+            C_created_at: new Date(),
+            C_update_at: new Date(),
         });
 
         res.json({
             success: true,
-            message: '社團創建成功',
-            club: club
+            message: '社團創建申請成功',
+            data: club
         });
+
     } catch (error) {
-        console.error('Error in createClub:', error);
+        console.error('Error:', error);
         res.status(500).json({
             success: false,
-            message: '社團創建失敗'
+            message: error.message || '社團創建申請失敗'
         });
     }
 };
@@ -100,7 +116,69 @@ exports.applyClub = async (req, res) => {
     }
 };
 
+//報名社團
+exports.signupClub = async (req, res) => {
+    try {
+        const signup = await Club_sign_record.create({
+            // M_id: req.user.M_id,
+            M_id:req.body.userId,
+            C_id: req.params.id,
+            signup_cause: req.body.cause,
+            signup_at: new Date(),
+            is_verify:false
+        });
 
+        res.json({
+            success: true,
+            message: '您的報名已提交，請待幹部審核',
+            data: signup
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '報名失敗'
+        });
+    }
+};
+
+//獲取報名列表
+exports.getSignupMembers = async (req, res) => {
+    try {
+        const signups = await Club_sign_record.findAll({
+            attributes:['signup_cause','is_verify','not_verify_cause'],
+            raw: true, // 使用原始查詢結果
+            nest: true, // 巢狀結果
+            where: {
+                C_id: req.params.id
+            },
+            include: [{
+                model: Member,
+                attributes: ['M_name', 'M_account', 'email', 'M_phone']
+            }]
+        });
+
+        // 格式化日期
+        const formattedSignups = signups.map(signup => ({
+            ...signup,
+            signup_at: signup.signup_at ? new Date(signup.signup_at).toLocaleString() : null
+        }));
+
+        res.json({
+            success: true,
+            message: '申請列表查詢成功',
+            data: formattedSignups
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '查詢失敗'
+        });
+    }
+}
 
 exports.addClub_member = (req,res) => {
     const {userId,clubId,permission} = req.body
