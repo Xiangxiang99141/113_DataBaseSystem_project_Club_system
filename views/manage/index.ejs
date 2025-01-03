@@ -19,8 +19,8 @@
         <div class="col-md-3">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h5 class="card-title">已報名社團</h5>
-                    <p class="card-text display-4"><%= isverify_clubCount %></p>
+                    <h5 class="card-title">已參加社團</h5>
+                    <p class="card-text display-4"><%= is_member_clubCount+admin_club_count %></p>
                 </div>
             </div>
         </div>
@@ -97,7 +97,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="card-header">
-                        <span class="fw-bold">已報名的社團</span>
+                        <span class="fw-bold">成為社員的社團</span>
                     </div>
                     <div class="card-body">
                         <table class="table table-sm table-hover">
@@ -109,8 +109,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (is_verify_club.length !=0) { %>
-                                    <% is_verify_club.forEach(club => { %>
+                                <% if (is_member_clubCount.length !=0) { %>
+                                    <% is_member_club.forEach(club => { %>
                                     <tr class="align-middle"">
                                         <td><%= club.Club.C_type %></td>
                                         <td><%= club.Club.C_name %></td>
