@@ -5,7 +5,8 @@ const { Club,
     Club_meeting,
     Club_equipment,
     Club_activity,
-    Club_course} = require('../db/models');
+    Club_course,
+    Club_sign_record} = require('../db/models');
 const { Op, where, Model } = require('sequelize');
 const { cache } = require('ejs');
 const e = require('connect-flash');
@@ -35,6 +36,8 @@ exports.getClubs = async (req, res) => {
 // 創建社團
 exports.createClub = async (req, res) => {
     try {
+        const user = await verification(req.cookies[COOKIE_NAME]);
+        console.log(user);
         const club = await Club.create({
             C_name: req.body.name,
             C_type: req.body.type,
@@ -46,6 +49,21 @@ exports.createClub = async (req, res) => {
             C_update_at: new Date(),
         });
 
+        //新增報名紀錄
+        await Club_sign_record.create({
+            M_id: user.userId,
+            C_id: club.C_id,
+            signup_cause: '創建社團',
+            signup_at: new Date(),
+            is_verify: true
+        });
+
+        //新增為成員
+        await Club_member.create({
+            M_id: user.userId,
+            C_id: club.C_id,
+            Cme_job: '社長'
+        });
         res.json({
             success: true,
             message: '社團創建申請成功',
