@@ -23,6 +23,7 @@ exports.Renderindex = async (req,res)=>{
                 break;
         
             default:
+                req.query.type = "全部";
                 clubs = await Club.findAll({
                     attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_quota'],
                     raw: true,
@@ -82,6 +83,7 @@ exports.Renderindex = async (req,res)=>{
         }
 
         res.render('index',{
+            type:req.query.type,
             clubs:clubs,
             isLogin:is_login,
             userId: user?user.userId:'',
