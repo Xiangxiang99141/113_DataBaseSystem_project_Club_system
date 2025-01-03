@@ -8,8 +8,16 @@ exports.getview = async (req,res) => {
     user = await verification(req.cookies[COOKIE_NAME]);
     if(req.query.id){
         try{
-            HasAdmin(req.query.id).then(result=>{
-                res.render('manage/Admin_index',result);
+            HasAdmin(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    getDetail(req.query.id).then((result)=>{
+                        res.render('manage/Admin_index',result);
+                    })
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
             });
         }catch(error){
             console.error('Error:', error);
@@ -80,7 +88,26 @@ exports.getview = async (req,res) => {
 
 
 
-async function HasAdmin(id){
+async function HasAdmin(userId,clubId){
+    const member = await Club_member.findOne({
+        attributes: ['Cme_job'],
+        where: {
+            M_id:userId,
+            C_id:clubId
+        }
+    });
+
+    if(member.Cme_job == "社長" || 
+        member.Cme_job == "副社長" || 
+        member.Cme_job == "幹部" || 
+        member.Cme_job == "社團指導老師"){
+        return true
+    }else {
+        return false
+    }
+}
+
+async function getDetail(id){
     const currentDate = new Date();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -112,6 +139,7 @@ async function HasAdmin(id){
                 courseCount
             }
 }
+
 
 // function isAdmin(token){
 //     verification(token).then(tokenResult=>{
