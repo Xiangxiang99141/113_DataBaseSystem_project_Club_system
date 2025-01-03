@@ -72,11 +72,11 @@
                             <tbody>
                                 <% if (admin_club.length !=0) { %>
                                     <% admin_club.forEach(club => { %>
-                                    <tr>
+                                    <tr class="align-middle">
                                         <td><%= club.Club.C_type %></td>
                                         <td><%= club.Club.C_name %></td>
                                         <td>
-                                            <a href="/club/info/<%= club.C_id %>" class="btn btn-primary btn-sm">查看社團</a>
+                                            <a href="/manage?id=<%= club.C_id %>" class="btn btn-primary btn-sm">編輯社團</a>
                                         </td>
                                     </tr>
                                     <% }) %>
@@ -111,7 +111,7 @@
                             <tbody>
                                 <% if (is_member_clubCount.length !=0) { %>
                                     <% is_member_club.forEach(club => { %>
-                                    <tr class="align-middle"">
+                                    <tr class="align-middle">
                                         <td><%= club.Club.C_type %></td>
                                         <td><%= club.Club.C_name %></td>
                                         <td>
