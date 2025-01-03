@@ -31,7 +31,10 @@
 
         <div class="row mb-4">
             <div class="col">
-                <h2>社團列表</h2>
+                    <h2>
+                        社團列表
+                        <span class="btn btn-outline-info btn-sm"><%= type %></span>
+                    </h2>
             </div>
             <div class="col-auto">
                 <div class="dropdown">
@@ -41,54 +44,60 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="?type=all">全部</a></li>
                         <li><a class="dropdown-item" href="?type=學藝性">學藝性</a></li>
-                        <li><a class="dropdown-item" href="?type=體育性">體育性</a></li>
+                        <li><a class="dropdown-item" href="?type=體能性">體能性</a></li>
                         <li><a class="dropdown-item" href="?type=服務性">服務性</a></li>
                         <li><a class="dropdown-item" href="?type=康樂性">康樂性</a></li>
+                        <li><a class="dropdown-item" href="?type=自治性">自治性</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            
-            <% clubs.forEach(function(club) { //製作社團列表%>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= club.C_name %></h5>
-                            <h6 class="card-subtitle mb-2 text-muted"><%= club.C_type %></h6>
-                            <p class="card-text"><%= club.C_intro %></p>
-                            <% if (club.C_web) { %>
-                                <p class="card-text">
-                                    <small class="text-muted">
-                                        社團網址：<a href="<%= club.C_web %>" target="_blank"><%= club.C_url %></a>
-                                    </small>
-                                </p>
-                                <% } %>
-                                <p class="card-text">
-                                    <small class="text-muted">名額：<%= club.C_quota %></small>
-                            </p>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <% if (isLogin) { %>
-                                <button class="btn btn-primary w-100"
-                                <% if(!club.isMember || !club.isVerify){ %> 
-                                    onclick="applyClub('<%= club.C_id %>', '<%= userId %>')"
+            <% if (clubs.length>=1) { %>
+                <% clubs.forEach(function(club) { //製作社團列表%>
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= club.C_name %></h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><%= club.C_type %></h6>
+                                <p class="card-text"><%= club.C_intro %></p>
+                                <% if (club.C_web) { %>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            社團網址：<a href="<%= club.C_web %>" target="_blank"><%= club.C_url %></a>
+                                        </small>
+                                    </p>
                                     <% } %>
-                                        <%= (club.isMember||club.isVerify) ? 'disabled' : '' %>>
-                                        <% if (club.isMember || club.isVerify) { %>
-                                            <%= club.isMember ? '查看社團' : '審核中' %>
-                                            <% } else { %>
-                                                <%= '報名' %>
+                                    <p class="card-text">
+                                        <small class="text-muted">名額：<%= club.C_quota %></small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <% if (isLogin) { %>
+                                    <button class="btn btn-primary w-100"
+                                    <% if(!club.isMember || !club.isVerify){ %> 
+                                        onclick="applyClub('<%= club.C_id %>', '<%= userId %>')"
                                         <% } %>
-                                    </button>
-                                    <% } else { %>
-                                        <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
-                                        <% } %>
+                                            <%= (club.isMember||club.isVerify) ? 'disabled' : '' %>>
+                                            <% if (club.isMember || club.isVerify) { %>
+                                                <%= club.isMember ? '查看社團' : '審核中' %>
+                                                <% } else { %>
+                                                    <%= '報名' %>
+                                            <% } %>
+                                        </button>
+                                        <% } else { %>
+                                            <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
+                                            <% } %>
+                            </div>
                         </div>
                     </div>
+                    <% }); %>
+            <% }else{ %>
+                <div class="alert alert-warning" role="alert">
+                    暫時還沒有這類型社團
                 </div>
-                <% }); %>
+            <% } %>
         </div>
     </div>
 
