@@ -340,7 +340,7 @@ router.post('/club/:id/activity', upload.single('plan'),async (req, res) => {
             Ca_name:req.body.name,
             Ca_content:req.body.content,
             Ca_location:req.body.location,
-            Ca_date:new Date(req.body.date),
+            Ca_date:new Date(req.body.datetime),
             Ca_quota:req.body.quota,
             Ca_open_at:new Date(req.body.open),
             Ca_close_at:new Date(req.body.close),
