@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Club_member, Club_activity, Club_course, Club_meeting, Club_sign_record, Member} = require('../db/models');
-const { Op, Model } = require('sequelize');
+const { Op, Model, where } = require('sequelize');
 const MemberController = require('../controllers/memberController');
 const ManageController = require('../controllers/manageController');
 const ClubController = require('../controllers/clubController');
@@ -16,15 +16,7 @@ router.get('/', isAuthenticated, ManageController.getview)
 router.get('/members', isAuthenticated, ManageController.getMembersView);
 
 // 活動管理
-router.get('/activities', isAuthenticated, async (req, res) => {
-    try {
-        const activities = await Club_activity.findAll();
-        res.render('activities/index', { activities });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Server Error');
-    }
-});
+router.get('/activities', isAuthenticated, ManageController.getActivitiesView);
 
 // 社課管理
 router.get('/courses', isAuthenticated, async (req, res) => {
