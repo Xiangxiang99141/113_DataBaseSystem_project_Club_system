@@ -7,8 +7,9 @@ const { Club_member,
     Club_equipment,
     Club_meeting,
     Club_announcement,
-    Club_history} = require('../db/models');
-const {Op, where} = require('sequelize');
+    Club_history,
+    Club_record} = require('../db/models');
+const {Op, where, or} = require('sequelize');
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
 const moment = require('moment');
@@ -256,6 +257,43 @@ exports.getActivitiesView = async (req, res) => {
     } 
 }
 
+exports.getRecordsView = async (req,res)=>{
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try{
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    getRecord(req.query.id).then(result=>{
+                        let records = result.map(record=>({
+                            Cr_id:record.Cr_id,
+                            M_name:record.Member.M_name,
+                            Cr_type:record.Cr_type,
+                            Cr_name:record.Cr_type=="活動"?record.Club_activity.Ca_name:record.Club_course.Cc_name,
+                            Cr_comment:record.Cr_comment,
+                            Cr_vote:record.Cr_vote,
+                        }));
+                        res.render('records/index',{
+                            clubId:req.query.id,
+                            records:records,
+                            success:null,
+                            error:null
+                        })
+                    });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
+            });
+        }catch(error){
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        };
+    }else{
+        //驗證是否為系統管理員
+    }
+}
+
 exports.updateMemberJob = async (req,res) => {
 
 }
@@ -392,4 +430,47 @@ async function getClubMember(clubId=null){
     }
     
     return club_member;
+}
+
+async function getRecord(clubId=null,userId=null){
+    let records;
+    if(clubId!=null){
+        records = await Club_record.findAll({
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            },{
+                model:Club_activity,
+                attributes:['Ca_name'],
+                order:[['Ca_date','DESC']]
+            },{
+                model:Club_course,
+                attributes:['Cc_name'],
+                order:[['Cc_date','DESC']]
+            }],
+            order:[['Cr_type','ASC']],
+            where:{
+                C_id:clubId
+            },
+            nest:true,
+            raw:true
+        });
+    }else{
+        records = await Club_record.findAll({
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            },{
+                model:Club_activity,
+                attributes:['Ca_name']
+            },{
+                model:Club_course,
+                attributes:['Cc_name']
+            }],
+            order:[['Cr_type','ASC'],['Cr_date','DESC']],
+            nest:true,
+            raw:true
+        });
+    }
+    return records;
 }
