@@ -412,6 +412,65 @@ exports.getInfo = async (req,res) => {
     }
 }
 
+
+exports.getClub = async (req,res) => {
+    try{
+        const club = await Club.findByPk(req.params.id,{
+            attributed:['C_name','C_type','C_intro','C_web','C_quota'],
+            nest:true,
+            raw:true
+        });
+        if(club){
+            res.json({
+                success: true,
+                message: '社團資訊獲取成功',
+                data: club
+            });
+        }
+    }catch(error){
+        res.json({
+            success: false,
+            message: '社團資訊獲取失敗',
+        });
+    }
+};
+
+//更新社團資訊
+exports.updateClub = async (req,res) => {
+    if(req.params.id){
+        try{
+            const club = await Club.update({
+                C_intro:req.body.intro,
+                C_web:req.body.web,
+                C_quota:req.body.quota,
+                C_update_at:new Date()
+            }, {
+                where:{
+                    C_id:req.params.id
+                }
+            });
+            if(club){
+                res.json({
+                    success:true,
+                    message:'社團資訊更新成功',
+                    data:club
+                });
+            }else{
+                res.status(500).json({
+                    success:false,
+                    message:'你是不是想抓bug'
+                });
+            }
+        }catch(error){
+
+        }
+    }else{
+        res.status(500).json({
+            success:false,
+            message:'想抓bug阿'
+        });
+    }
+}
 //判斷活動是否可報名
 //時間內可報名，當天顯示即將開始
 function isStrat(open,close,date){
