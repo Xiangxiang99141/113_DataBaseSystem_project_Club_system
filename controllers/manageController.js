@@ -144,52 +144,62 @@ exports.getEquipments = (req,res)=>{
 }
 
 exports.getMembersView = async (req, res) => {
+    user = await verification(req.cookies[COOKIE_NAME]);
     if(req.query.id){
         try {
-            Club_member.findAll({
-                attributes: ['C_id', 'M_id', 'Cme_job','Cme_member_join_at'],
-                include: [{
-                    model: Member,
-                    required: true,
-                    attributes: ['M_name',]
-                }],
-                order: [
-                    ['Cme_job', 'ASC'],
-                    [Member, 'M_name', 'ASC']
-                ],
-                where: {
-                    C_id: req.query.id
-                }
-            }).then(members => {
-                if (!members || members.length === 0) {
-                    res.render('members/index', { 
-                        members: [],
-                        error: '目前沒有社員資料' 
+            //權限管理
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    Club_member.findAll({
+                        attributes: ['C_id', 'M_id', 'Cme_job','Cme_member_join_at'],
+                        include: [{
+                            model: Member,
+                            required: true,
+                            attributes: ['M_name',]
+                        }],
+                        order: [
+                            ['Cme_job', 'ASC'],
+                            [Member, 'M_name', 'ASC']
+                        ],
+                        where: {
+                            C_id: req.query.id
+                        }
+                    }).then(members => {
+                        if (!members || members.length === 0) {
+                            res.render('members/index', { 
+                                members: [],
+                                error: '目前沒有社員資料' 
+                            });
+                            return;
+                        }
+                        
+                        // 處理數據以便於前端顯示
+                        const processedMembers = members.map(member => ({
+                            C_id: member.C_id,
+                            M_id: member.M_id,
+                            M_name: member.Member.M_name,
+                            Cme_job: member.Cme_job,
+                            join_at: moment(member.Cme_member_join_at).format('YYYY-MM-DD dddd'),
+                        }));
+            
+                        res.render('members/index', {
+                            clubId: req.query.id,
+                            members:[],
+                            clubMembers: processedMembers,
+                            error: null 
+                        });
+                    }).catch(error => {
+                        console.error('Error in getview:', error);
+                        res.render('members/index', { 
+                            members: [],
+                            error: '獲取社員資料時發生錯誤' 
+                        });
                     });
-                    return;
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
                 }
-                
-                // 處理數據以便於前端顯示
-                const processedMembers = members.map(member => ({
-                    C_id: member.C_id,
-                    M_id: member.M_id,
-                    M_name: member.Member.M_name,
-                    Cme_job: member.Cme_job,
-                    join_at: moment(member.Cme_member_join_at).format('YYYY-MM-DD dddd'),
-                }));
-    
-                res.render('members/index', {
-                    clubId: req.query.id,
-                    members:[],
-                    clubMembers: processedMembers,
-                    error: null 
-                });
-            }).catch(error => {
-                console.error('Error in getview:', error);
-                res.render('members/index', { 
-                    members: [],
-                    error: '獲取社員資料時發生錯誤' 
-                });
             });
         } catch (error) {
             console.error('Error in getview:', error);
@@ -201,6 +211,40 @@ exports.getMembersView = async (req, res) => {
     }else{
 
     }
+}
+
+exports.getActivitiesView = async (req, res) => {
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try {
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    Club_activity.findAll({
+                        where:{
+                            C_id:req.query.id
+                        }
+                    }).then(activities=>{
+                        res.render('activities/index', { 
+                            clubId:req.query.id,
+                            activities,
+                            success:null,
+                            error:null
+                        });
+                    });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        }
+    }else{
+        //驗證是否為系統管理員
+    } 
 }
 
 exports.updateMemberJob = async (req,res) => {
