@@ -270,22 +270,7 @@ exports.createMeeting = (req,res) =>{
 
 }
 
-exports.getEquipments = (req,res)=>{
-    try{
-        getClubMember().then(club_member=>{
-            getEquipment().then(equipments=>{
-                res.render('equipments/index',{
-                    equipments:equipments,
-                    members:club_member,
-                    success:null,
-                    error:null
-                })
-            });
-        });
-    }catch{
 
-    }
-}
 
 //獲取社團路由首頁
 exports.getHome = async (req,res)=>{
