@@ -11,6 +11,7 @@ const { Club_member,
 const {Op, where} = require('sequelize');
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
+const moment = require('moment');
 
 
 exports.getview = async (req,res) => {
@@ -142,6 +143,70 @@ exports.getEquipments = (req,res)=>{
     }
 }
 
+exports.getMembersView = async (req, res) => {
+    if(req.query.id){
+        try {
+            Club_member.findAll({
+                attributes: ['C_id', 'M_id', 'Cme_job','Cme_member_join_at'],
+                include: [{
+                    model: Member,
+                    required: true,
+                    attributes: ['M_name',]
+                }],
+                order: [
+                    ['Cme_job', 'ASC'],
+                    [Member, 'M_name', 'ASC']
+                ],
+                where: {
+                    C_id: req.query.id
+                }
+            }).then(members => {
+                if (!members || members.length === 0) {
+                    res.render('members/index', { 
+                        members: [],
+                        error: '目前沒有社員資料' 
+                    });
+                    return;
+                }
+                
+                // 處理數據以便於前端顯示
+                const processedMembers = members.map(member => ({
+                    C_id: member.C_id,
+                    M_id: member.M_id,
+                    M_name: member.Member.M_name,
+                    Cme_job: member.Cme_job,
+                    join_at: moment(member.Cme_member_join_at).format('YYYY-MM-DD dddd'),
+                }));
+    
+                res.render('members/index', {
+                    clubId: req.query.id,
+                    members:[],
+                    clubMembers: processedMembers,
+                    error: null 
+                });
+            }).catch(error => {
+                console.error('Error in getview:', error);
+                res.render('members/index', { 
+                    members: [],
+                    error: '獲取社員資料時發生錯誤' 
+                });
+            });
+        } catch (error) {
+            console.error('Error in getview:', error);
+            res.render('members/index', { 
+                members: [],
+                error: '獲取社員資料時發生錯誤' 
+            });
+        }
+    }else{
+
+    }
+}
+
+exports.updateMemberJob = async (req,res) => {
+
+}
+
 
 
 //檢查是否有這個社團的編輯權限
@@ -198,6 +263,7 @@ async function getClubDetail(id){
         }
     });
     return {
+                clubId:id,
                 club,
                 memberCount,
                 activityCount,
