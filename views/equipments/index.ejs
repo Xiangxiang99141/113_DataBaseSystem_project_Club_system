@@ -29,7 +29,7 @@
         <% } %>
         
         <h2>器材管理</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEquipmentModal">新增器材</button>
+        <button class="btn btn-primary" onclick="createEquipment('<%= clubId %>')">新增器材</button>
     </div>
 
     <div class="card">
@@ -55,7 +55,7 @@
                                 <td><%= equipment.Ce_source %></td>
                                 <td>
                                     <button class="btn btn-sm btn-info me-2" 
-                                            onclick="showEquipmentDetails('<%= equipment.Ce_id %>', '<%= equipment.Ce_name %>', '<%= equipment.Ce_count %>', '<%= equipment.Ce_spec %>', '<%= equipment.Ce_source %>', '<%= equipment.Member.M_name %>', '<%= equipment.Member.M_name %>')">
+                                            onclick="showEquipmentDetails('<%= equipment.Ce_id %>', '<%= clubId %>')">
                                         詳細資訊
                                     </button>
                                 </td>
@@ -75,7 +75,7 @@
 
 <!-- 器材詳細資訊 Modal -->
 <div class="modal fade" id="equipmentDetailsModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">器材詳細資訊</h5>
@@ -106,6 +106,13 @@
                     <label class="fw-bold">管理人：</label>
                     <span id="detailReport"></span>
                 </div>
+                <div class="mb-3">
+                    <label class="fw-bold">用途：</label>
+                    <span id="detailUse"></span>
+                </div>
+                <div class="mb-3">
+                    <img id="detailImage" src="" class="img-thumbnail" alt="器材圖片">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
@@ -116,7 +123,7 @@
 
 <!-- 新增器材 Modal -->
 <div class="modal fade" id="addEquipmentModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog  modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">新增器材</h5>
@@ -154,7 +161,13 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">填報人</label>
-                        <input type="text" class="form-control" disabled>
+                        <% if (members != undefined) { %>
+                            <select class="form-select" name="report" required>
+                            <% members.forEach(member => { %>
+                            <option value="<%= member.M_id %>"><%= member.Member.M_name %></option>
+                            <% }); %>
+                            </select>
+                        <% } %>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">管理者</label>
@@ -186,114 +199,6 @@
     </div>
 </div>
 
-<script>
-// 顯示器材詳細資訊
-function showEquipmentDetails(id, name, quantity, spec, source, admin, report) {
-    document.getElementById('detailName').textContent = name;
-    document.getElementById('detailQuantity').textContent = quantity;
-    document.getElementById('detailSpec').textContent = spec;
-    document.getElementById('detailSource').textContent = source;
-    document.getElementById('detailAdmin').textContent = admin;
-    document.getElementById('detailReport').textContent = report || '無';
-    
-    new bootstrap.Modal(document.getElementById('equipmentDetailsModal')).show();
-}
-
-// 新增器材
-document.getElementById('createEquipmentBtn').addEventListener('click', async function() {
-    try {
-        const form = document.getElementById('addEquipmentForm');
-        const formData = new FormData(form);
-
-        // 檢查必填欄位
-        const requiredFields = ['name', 'quantity', 'spec', 'use', 'source', 'admin'];
-        for (const field of requiredFields) {
-            if (!formData.get(field)) {
-                throw new Error(`${field} 是必填欄位`);
-            }
-        }
-
-        // 檢查數量是否為正數
-        const quantity = parseInt(formData.get('quantity'));
-        if (isNaN(quantity) || quantity <= 0) {
-            throw new Error('數量必須大於 0');
-        }
-
-        // 如果沒有選擇日期，使用當前日期
-        if (!formData.get('date')) {
-            formData.set('date', new Date().toISOString().split('T')[0]);
-        }
-
-        const response = await fetch('../../api/create/equipment', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || `HTTP error! status: ${response.status}`);
-        }
-
-        if (result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('addEquipmentModal')).hide();
-            
-            const alertHtml = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    器材新增成功
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
-
-            location.reload();
-        } else {
-            throw new Error(result.message || '新增失敗');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        const alertHtml = `
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                ${error.message || '新增器材時發生錯誤'}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
-    }
-});
-
-// 預覽圖片
-document.getElementById('equipmentPhoto').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        if (file.size > 5 * 1024 * 1024) { // 5MB
-            alert('圖片大小不能超過 5MB');
-            this.value = '';
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const previewDiv = document.getElementById('photoPreview');
-            const previewImg = previewDiv.querySelector('img');
-            previewImg.src = e.target.result;
-            previewDiv.classList.remove('d-none');
-        }
-        reader.readAsDataURL(file);
-    }
-});
-
-document.getElementById('previewBtn').addEventListener('click', function() {
-    document.getElementById('equipmentPhoto').click();
-});
-
-// 清除 Modal 表單和預覽圖
-document.getElementById('addEquipmentModal').addEventListener('hidden.bs.modal', function () {
-    document.getElementById('addEquipmentForm').reset();
-    const previewDiv = document.getElementById('photoPreview');
-    previewDiv.classList.add('d-none');
-    previewDiv.querySelector('img').src = '';
-});
-</script>
-
 <%- include('../layouts/footer') %>
+<script src="../js/equipment.js"></script>
 </html>
