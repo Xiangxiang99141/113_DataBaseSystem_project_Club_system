@@ -112,6 +112,13 @@ async function getDetail(id){
     const currentDate = new Date();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    const club = await Club.findOne({
+        attributes: ['C_id', 'C_name', 'C_type','C_intro','C_web'],
+        where: {
+            C_id:id
+        }
+    });
     // 獲取統計數據
     const memberCount = await Club_member.count({
         where: {
@@ -135,6 +142,7 @@ async function getDetail(id){
         }
     });
     return {
+                club,
                 memberCount,
                 activityCount,
                 courseCount
