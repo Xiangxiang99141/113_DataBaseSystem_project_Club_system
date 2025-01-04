@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       Club_record.belongsTo(models.Club_course,{
         foreignKey:"Cc_id"
       });
+      Club_record.belongsTo(models.Member,{
+        foreignKey:"M_id"
+      });
     }
   }
   Club_record.init({
@@ -46,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     Cr_vote: {
       type:DataTypes.ENUM('非常滿意','滿意','尚可','不滿意','非常不滿意'),
+      allowNull:false
+    },
+    C_id:{
+      type:DataTypes.BIGINT,
       allowNull:false
     }
   }, {
