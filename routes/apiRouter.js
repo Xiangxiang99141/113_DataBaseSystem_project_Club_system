@@ -156,6 +156,10 @@ router.post('/club/create', clubController.createClub);
 //獲取社團列表
 router.get('/clubs', clubController.getClubs);
 
+//獲取社團資訊
+router.get('/club/:id', clubController.getClub);
+//更新社團資訊
+router.put('/club/:id', clubController.updateClub);
 // 社團報名
 router.post('/club/:id/signUp',  clubController.signupClub);
 
