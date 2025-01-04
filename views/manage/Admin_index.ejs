@@ -71,7 +71,7 @@
                     <i class="bi bi-people fs-1 mb-3"></i>
                     <h5 class="card-title">社員管理</h5>
                     <p class="card-text">管理社團成員資料、職位分配及權限設定</p>
-                    <a href="/manage/members" class="btn btn-primary">進入管理</a>
+                    <a href="/manage/members?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@
                     <i class="bi bi-calendar-event fs-1 mb-3"></i>
                     <h5 class="card-title">活動管理</h5>
                     <p class="card-text">規劃及管理社團活動、報名系統及活動記錄</p>
-                    <a href="/manage/activities" class="btn btn-primary">進入管理</a>
+                    <a href="/manage/activities?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                     <i class="bi bi-book fs-1 mb-3"></i>
                     <h5 class="card-title">社課管理</h5>
                     <p class="card-text">安排社課時間、內容及出席記錄</p>
-                    <a href="/manage/courses" class="btn btn-primary">進入管理</a>
+                    <a href="/manage/courses?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@
                     <i class="bi bi-chat-square-text fs-1 mb-3"></i>
                     <h5 class="card-title">會議管理</h5>
                     <p class="card-text">記錄社團會議內容及決議事項</p>
-                    <a href="/manage/meetings" class="btn btn-primary">進入管理</a>
+                    <a href="/manage/meetings?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
                     <i class="bi bi-tools fs-1 mb-3"></i>
                     <h5 class="card-title">器材管理</h5>
                     <p class="card-text">管理社團器材的借用及維護記錄</p>
-                    <a href="/manage/equipment" class="btn btn-primary">進入管理</a>
+                    <a href="/manage/equipment?<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
@@ -131,7 +131,7 @@
                     <i class="bi bi-gear fs-1 mb-3"></i>
                     <h5 class="card-title">報名列表</h5>
                     <p class="card-text">查看報名社團列表</p>
-                    <a href="/manage/signup" class="btn btn-primary">進入設定</a>
+                    <a href="/manage/signup?<%= club.C_id %>" class="btn btn-primary">進入設定</a>
                 </div>
             </div>
         </div>
