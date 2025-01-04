@@ -193,6 +193,7 @@ router.get('/club/:id/members',async (req,res)=>{
     }
     
 });
+//新增社員
 router.post('/club/:id/member',async (req,res)=>{
     try {
         //新增社團成員
