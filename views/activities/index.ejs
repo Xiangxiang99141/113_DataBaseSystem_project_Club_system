@@ -57,7 +57,7 @@
 
 <!-- 新增活動 Modal -->
 <div class="modal fade" id="addActivityModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">新增活動</h5>
@@ -67,41 +67,45 @@
                 <form id="addActivityForm">
                     <div class="mb-3">
                         <label class="form-label">活動名稱</label>
-                        <input type="text" class="form-control" name="Ca_name" required>
+                        <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">活動內容</label>
-                        <textarea class="form-control" name="Ca_content" rows="3" required></textarea>
+                        <textarea class="form-control" name="content" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">地點</label>
-                        <input type="text" class="form-control" name="Ca_location" required>
+                        <input type="text" class="form-control" name="location" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">日期</label>
-                        <input type="datetime-local" class="form-control" name="Ca_date" required>
+                        <input type="datetime-local" class="form-control" name="datetime" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">名額</label>
-                        <input type="number" class="form-control" name="Ca_quota" required>
+                        <input type="number" class="form-control" name="quota" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">報名開始時間</label>
-                        <input type="datetime-local" class="form-control" name="Ca_open_at" required>
+                        <input type="datetime-local" class="form-control" name="open" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">報名結束時間</label>
-                        <input type="datetime-local" class="form-control" name="Ca_close_at" required>
+                        <input type="datetime-local" class="form-control" name="close" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">活動企劃書</label>
+                        <input type="file" class="form-control" name="plan">
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="insurance">
+                            <input class="form-check-input" type="checkbox" id="insurance" name="insurance">
                             <label class="form-check-label">需要保險</label>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="transportation">
+                            <input class="form-check-input" type="checkbox" id="transportation" name="transportation">
                             <label class="form-check-label">需要交通</label>
                         </div>
                     </div>
@@ -109,11 +113,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="submit" form="addActivityForm" class="btn btn-primary">新增</button>
+                <button type="submit" id="addActivityBtn" onclick="addActivity('<%= clubId %>')" class="btn btn-primary">新增</button>
             </div>
         </div>
     </div>
 </div>
 
+<script scr="/js/activity.js"></script>
 <%- include('../layouts/footer') %>
 </html>
