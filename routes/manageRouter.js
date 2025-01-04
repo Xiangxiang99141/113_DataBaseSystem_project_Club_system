@@ -13,7 +13,7 @@ const {isAuthenticated} = require('../middleware/auth');
 router.get('/', isAuthenticated, ManageController.getview)
 
 // 社員管理
-router.get('/members', MemberController.getview);
+router.get('/members', ManageController.getMembersView);
 
 // 活動管理
 router.get('/activities', async (req, res) => {
