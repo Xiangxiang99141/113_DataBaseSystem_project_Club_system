@@ -223,7 +223,16 @@ exports.getActivitiesView = async (req, res) => {
                         where:{
                             C_id:req.query.id
                         }
-                    }).then(activities=>{
+                    }).then(result=>{
+                        let activities = result.map(activity=>({
+                            Ca_id:activity.Ca_id,
+                            Ca_name:activity.Ca_name,
+                            Ca_content:activity.Ca_content,
+                            Ca_date:moment(activity.Ca_date).format('YYYY-MM-DD dddd'),
+                            Ca_open_at:moment(activity.Ca_open_at).format('YYYY-MM-DD HH:mm'),
+                            Ca_close_at:moment(activity.Ca_close_at).format('YYYY-MM-DD HH:mm'),
+                            Ca_location:activity.Ca_location
+                        }));
                         res.render('activities/index', { 
                             clubId:req.query.id,
                             activities,
