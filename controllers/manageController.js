@@ -170,7 +170,7 @@ async function getClubDetail(id){
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     
     const club = await Club.findOne({
-        attributes: ['C_id', 'C_name', 'C_type','C_intro','C_web'],
+        attributes: ['C_id', 'C_name', 'C_type', 'C_intro', 'C_web', 'C_quota'],
         where: {
             C_id:id
         }
