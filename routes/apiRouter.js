@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
         // 根據不同類型的文件設置不同的上傳目錄
         switch(req.query.type) {
             case 'equipment':
-                uploadDir += 'equipment';
+                uploadDir += 'equipments';
                 break;
             case 'activity':
                 uploadDir += 'activity';
@@ -409,11 +409,39 @@ router.get('/club/:id/equipments', async (req, res) => {
         });
     }
 });
+router.get('/club/:id/equipment/:eid', async (req, res) => {
+    try {
+        const equipment = await Club_equipment.findOne({
+            where:{
+                Ce_id:req.params.eid,
+                C_id:req.params.id
+            },
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name','M_id']
+            }]
+        });
+        res.status(200).json({
+            success: true,
+            message: '器材獲取成功',
+            data: equipment
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取器材失敗'
+        });
+    }
+});
 router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => {
     try {
-        const { name, quantity, spec, use, source, admin, date } = req.body;
+        const { name, quantity, spec, use, source, admin, date ,report} = req.body;
         
-        if (!name || !quantity || !spec || !use || !source || !admin) {
+        if (!name || !quantity || !spec || !use || !source || !admin || !report) {
             return res.status(400).json({
                 success: false,
                 message: '所有欄位都是必填的'
@@ -428,8 +456,7 @@ router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => 
             Ce_source: source,
             Ce_img: req.file ? `/uploads/equipments/${req.file.filename}` : null,
             Ce_admin: admin,
-            // Ce_report: req.user.M_id,
-            Ce_report: '5dbe2388-fc3c-4728-87ad-f6a91dd22fcd',
+            Ce_report: report,
             Ce_purch_at: date ? new Date(date) : new Date(),
             C_id: req.params.id
         });
@@ -445,6 +472,38 @@ router.post('/club/:id/equipment',  upload.single('photo'), async (req, res) => 
         res.status(500).json({
             success: false,
             message: error.message || '新增器材時發生錯誤'
+        });
+    }
+});
+router.put('/club/:id/equipment/:eid', async (req, res) => {
+    try {
+        const equipment = await Club_equipment.update({
+            Ce_name: req.body.name,
+            Ce_count: req.body.quantity,
+            Ce_spec: req.body.spec,
+            Ce_use: req.body.use,
+            Ce_source: req.body.source,
+            Ce_admin: req.body.admin,
+            Ce_report: req.body.report,
+            Ce_purch_at: req.body.date ? new Date(req.body.date) : new Date()
+        }, {
+            where: {
+                Ce_id: req.params.eid,
+                C_id: req.params.id
+            }
+        });
+
+        res.json({
+            success: true,
+            message: '器材更新成功',
+            data: equipment
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '更新器材時發生錯誤'
         });
     }
 });
