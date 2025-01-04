@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       Ce_name: {
-        type: Sequelize.STRING(10),
+        type: Sequelize.STRING(30),
         allowNull:false
       },
       Ce_spec: {
