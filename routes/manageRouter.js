@@ -58,7 +58,7 @@ router.get('/meetings',
 );
 // router.post('/meeting',ClubController.createMeeting);
 
-router.get('/equipment',ClubController.getEquipments);
+router.get('/equipment',isAuthenticated,ManageController.getEquipmentsView);
 
 //顯示報名列表
 router.get('/signup',async (req,res)=>{
