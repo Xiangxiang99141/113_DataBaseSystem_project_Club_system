@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>社團管理系統</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </head>
@@ -13,7 +14,55 @@
 
 <div class="container mt-4">
     <h1 class="text-center mb-5">社團管理系統</h1>
-
+    <!-- 社團詳細資訊 -->
+    <div class="row mb-3 g-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-2 text-center">社團名稱</div>
+                                <div class="col-10"><%= club.C_name %></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-2 text-center">社團類型</div>
+                                <div class="col-10"><%= club.C_type %></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-2 text-center">
+                                    社團介紹
+                                </div>
+                                <div class="col-10">
+                                    <%= club.C_intro %>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-2 text-center">社團網址</div>
+                                <div class="col-10">
+                                    <% if (club.C_web) { %>
+                                        <a href="<%= club.C_web %>"><%= club.C_web %></a>
+                                    <% }else{ %>
+                                        <div class="badge bg-warning text-dark p-2">
+                                            社團網址尚未設定，建議設定讓更多人認識呦~~
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-primary" onclick="settingClub('<%= club.C_id %>')">
+                                <i class="fa-solid fa-gear"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <!-- 社員管理卡片 -->
         <div class="col">
@@ -75,7 +124,7 @@
             </div>
         </div>
 
-        <!-- 系統設定卡片 -->
+        <!-- 報名列表卡片 -->
         <div class="col">
             <div class="card h-100">
                 <div class="card-body text-center">
@@ -87,6 +136,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- 快速統計資訊 -->
     <div class="row mt-5">
@@ -116,6 +166,51 @@
         </div>
     </div>
 </div>
+
+
+    <!-- 社團設定 Modal -->
+    <div class="modal fade" id="settingModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">社團設定</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                        <form id="settingForm">
+                            <div class="mb-3">
+                                <label for="clubName" class="form-label">社團名稱 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="clubName" name="name" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="clubType" class="form-label">社團類型 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="clubType" name="type" disabled>
+                                    <option value="<%= club.C_type %>"><%= club.C_type %></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="clubIntro" class="form-label">社團介紹 <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="clubIntro" name="intro" rows="4" maxlength="50" required></textarea>
+                                <div class="invalid-feedback" id="intro-invalid-feedback">社團介紹最多 50 個字元</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="clubWeb" class="form-label">社團網址</label>
+                                <input type="url" class="form-control" id="clubWeb" name="web" placeholder="https://example.com">
+                                <div class="form-text">選填，請輸入完整網址（包含 https:// 或 http://）</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="clubQuota" class="form-label">社團名額 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="clubQuota" name="quota" min="1" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="confirmApply">確定</button>
+                    </div>
+            </div>
+        </div>
+    </div>
 
 <%- include('../layouts/footer') %>
 
