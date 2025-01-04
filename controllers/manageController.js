@@ -1,4 +1,13 @@
-const { Club_member, Club_activity, Club_course,Club_sign_record, Club} = require('../db/models');
+const { Club_member,
+    Club_activity,
+    Club_course,
+    Club_sign_record,
+    Club,
+    Member,
+    Club_equipment,
+    Club_meeting,
+    Club_announcement,
+    Club_history} = require('../db/models');
 const {Op, where} = require('sequelize');
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
@@ -8,9 +17,9 @@ exports.getview = async (req,res) => {
     user = await verification(req.cookies[COOKIE_NAME]);
         if(req.query.id){
             try{
-                HasAdmin(user.userId,req.query.id).then((isAdmin)=>{
+                HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
                     if(isAdmin){
-                        getDetail(req.query.id).then((result)=>{
+                        getClubDetail(req.query.id).then((result)=>{
                             res.render('manage/Admin_index',result);
                         })
                     }else{
@@ -84,12 +93,59 @@ exports.getview = async (req,res) => {
         }
 };
 
+exports.getEquipmentsView = async (req,res) => {
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try{
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    getClubMember(req.query.id).then(club_member=>{
+                        getEquipments(req.query.id).then(equipments=>{
+                            res.render('equipments/index',{
+                                clubId:req.query.id,
+                                equipments:equipments,
+                                members:club_member,
+                                success:null,
+                                error:null
+                            })
+                        });
+                    });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
+            });
+        }catch(error){
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        };
+    }else{
+        //驗證是否為系統管理員
+    }
+}
+
+exports.getEquipments = (req,res)=>{
+    try{
+        getClubMember().then(club_member=>{
+            getEquipment().then(equipments=>{
+                res.render('equipments/index',{
+                    equipments:equipments,
+                    members:club_member,
+                    success:null,
+                    error:null
+                })
+            });
+        });
+    }catch{
+
+    }
+}
 
 
 
-
-
-async function HasAdmin(userId,clubId){
+//檢查是否有這個社團的編輯權限
+async function HasPermissions(userId,clubId){
     const member = await Club_member.findOne({
         attributes: ['Cme_job'],
         where: {
@@ -107,8 +163,8 @@ async function HasAdmin(userId,clubId){
         return false
     }
 }
-
-async function getDetail(id){
+//獲取社團詳細資訊
+async function getClubDetail(id){
     const currentDate = new Date();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -155,3 +211,66 @@ async function getDetail(id){
 //         if(tokenResult.Permissions)
 //     });
 // }
+
+//獲取社團器材
+async function getEquipments(clubId=null){
+    let equipents;
+    if(clubId!=null){
+        equipents = await Club_equipment.findAll({
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            }],
+            where:{
+                C_id:clubId
+            },
+            nest:true,
+            raw:true
+        });
+    }else{
+        equipents = await Club_equipment.findAll({
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name']
+            }],
+            nest:true,
+            raw:true
+        });
+    }
+
+    return equipents;
+}
+
+//獲取社團成員
+async function getClubMember(clubId=null){
+    let club_member;
+    if(clubId!=null){
+        club_member = await Club_member.findAll({
+            attributes:['M_id','Cme_job'],
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            }],
+            where:{
+                C_id:clubId
+            },
+            nest:true,
+            raw:true
+        });
+    }else{
+        club_member = await Club_member.findAll({
+            attributes:['M_id','Cme_job'],
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            }],
+            nest:true,
+            raw:true
+        });
+    }
+    
+    return club_member;
+}
