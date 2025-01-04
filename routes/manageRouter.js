@@ -76,5 +76,5 @@ router.get('/signup', isAuthenticated, async (req,res)=>{
     }
 });
 
-
+router.get('/records', isAuthenticated,ManageController.getRecordsView);
 module.exports = router;
