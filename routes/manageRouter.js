@@ -16,7 +16,7 @@ router.get('/', isAuthenticated, ManageController.getview)
 router.get('/members', ManageController.getMembersView);
 
 // 活動管理
-router.get('/activities', async (req, res) => {
+router.get('/activities', isAuthenticated, async (req, res) => {
     try {
         const activities = await Club_activity.findAll();
         res.render('activities/index', { activities });
@@ -27,7 +27,7 @@ router.get('/activities', async (req, res) => {
 });
 
 // 社課管理
-router.get('/courses', async (req, res) => {
+router.get('/courses', isAuthenticated, async (req, res) => {
     try {
         const courses = await Club_course.findAll();
         res.render('courses/index', { courses });
@@ -38,7 +38,7 @@ router.get('/courses', async (req, res) => {
 });
 
 // 會議管理
-router.get('/meetings', 
+router.get('/meetings', isAuthenticated, 
     ClubController.getMeetings
     // async (req, res) => {
     // try {
@@ -61,7 +61,7 @@ router.get('/meetings',
 router.get('/equipment',isAuthenticated,ManageController.getEquipmentsView);
 
 //顯示報名列表
-router.get('/signup',async (req,res)=>{
+router.get('/signup', isAuthenticated, async (req,res)=>{
     try {
         let islogin = util.loginInfo(req.cookies['auth_token']);
         const signup_list = await Club_sign_record.findAll({
