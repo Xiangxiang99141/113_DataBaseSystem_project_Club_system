@@ -195,17 +195,34 @@ router.get('/club/:id/members',async (req,res)=>{
 });
 router.post('/club/:id/member',async (req,res)=>{
     try {
+        //新增社團成員
         const clubMember = await Club_member.create({
             C_id:req.params.id,
             M_id:req.body.userId,
             Cme_job:req.body.job,
             Cme_member_join_at:new Date()
         });
-        res.json({
-            success: true,
-            message: '社團報名成功',
-            data: clubMember
+        //新增報名紀錄
+        const clubSignRecord = await Club_sign_record.create({
+            M_id:req.body.userId,
+            C_id:req.params.id,
+            is_verify:true,
+            signup_cause:'由社團幹部新增',
+            signup_at:new Date()
         });
+        //如果都新增成功才回傳成功
+        if(clubMember && clubSignRecord){
+            res.status(200).json({
+                success: true,
+                message: '社團成員新增成功',
+                data: clubMember
+            });
+        }else{
+            res.json({
+                success: false,
+                message: '伺服器錯誤'
+            });
+        };
     } catch (error) {
         res.json({
             success: false,
@@ -564,6 +581,28 @@ router.post('/club/:id/announcement', upload.fields([
     { name: 'attachment', maxCount: 1 },
     { name: 'image', maxCount: 1 }
 ]),uploadController.Upload_announcement);
+
+//獲取系統成員
+router.get('/members',async (req,res)=>{
+    try {
+        const members = await Member.findAll({
+            attributes:['M_id','M_name'],
+            raw:true,
+            nest:true
+        });
+        res.status(200).json({
+            success: true,
+            message: '獲取成員成功',
+            data: members
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取成員失敗'
+        });
+    }
+});
 
 // 解析 JSON
 router.use(express.json());
