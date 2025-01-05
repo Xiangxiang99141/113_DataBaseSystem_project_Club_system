@@ -313,6 +313,14 @@ exports.getInfoHome = async (req,res) => {
 }
 exports.getInfo = async (req,res) => {
     try {
+        let is_login = false;
+        let user;
+        if(req.cookies[COOKIE_NAME]){
+            user = await verification(req.cookies[COOKIE_NAME]);
+        }
+        if(user){
+            is_login = true;
+        }
         //使用社團ID找尋社團
         const club = await Club.findByPk(req.params.id,{
             include:[{
@@ -381,6 +389,7 @@ exports.getInfo = async (req,res) => {
         });
 
         res.render('club_info',{
+            isLogin:is_login,
             club:club,
             activities:activities || [],
             courses:courses || [],
@@ -396,6 +405,62 @@ exports.getInfo = async (req,res) => {
         });
     }
 }
+
+exports.getActivitiesListView = async (req,res)=>{
+    try{
+        let is_login = false;
+        let user;
+        let activities;
+        if(req.cookies[COOKIE_NAME]){
+            user = await verification(req.cookies[COOKIE_NAME]);
+        }
+        if(user){
+            is_login = true;
+        }
+        let clubs = await getClubs();
+        Club_activity.findAll({
+            attributed:['Ca_id','Ca_name','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
+            include:[{
+                model:Club,
+                attributed:['C_id','C_name']
+            }],
+            nest:true,
+            raw:true
+        }).then(result=>{
+            activities = result.map(row=>({
+                    Ca_id:row.Ca_id,
+                    Ca_name:row.Ca_name,
+                    Ca_location:row.Ca_location,
+                    Ca_date:covertDate(row.Ca_date),
+                    Ca_quota:row.Ca_quota,
+                    Ca_status:isStrat(
+                        row.Ca_open_at,
+                        row.Ca_close_at
+                    ),
+                    C_name:row.Club.C_name,
+                    C_id:row.Club.C_id
+            }));
+            res.status(200).render('activity_list',{
+                isLogin:is_login,
+                activities:activities,
+                clubs:clubs,
+                success:null,
+            })
+        });
+
+    } catch (error) {
+        console.error('Error in getClub Activities:', error);
+        res.status(500).json({
+            success: false,
+            message: '社團活動獲取失敗'
+        });
+    }
+}
+
+exports.getCoursesListView = async (req,res) =>{
+    
+}
+
 
 
 exports.getClub = async (req,res) => {
@@ -539,4 +604,13 @@ async function getClubMember(){
         raw:true
     });
     return club_member;
+}
+
+async function getClubs(){
+    const clubs = Club.findAll({
+        attributed:['C_id','C_name','C_type'],
+        nest:true,
+        raw:true
+    })
+    return clubs;
 }
