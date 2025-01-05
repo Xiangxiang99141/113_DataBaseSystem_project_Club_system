@@ -16,6 +16,11 @@ router.get('/info/:id',clubController.getInfo);
 router.get('/activity',clubController.getActivitiesListView)
 router.get('/course',clubController.getCoursesListView)
 
+//顯示活動報名頁面
+router.get('/activity/signup',isAuthenticated,clubController.getActivitySignupView);
+//顯示課程報名頁面
+router.get('/course/signup',isAuthenticated,clubController.getCourseSignupView);
+
 // API: 報名社團（需要登入）
 router.post('/api/clubs/apply', isAuthenticated, clubController.applyClub);
 
