@@ -287,6 +287,10 @@ router.post('/club/:id/activity', upload.single('plan'),async (req, res) => {
         });
     }
 });
+//報名活動
+router.post('/club/:id/course/:CId',async (req,res)=>{
+
+});
 
 // 社課相關 API
 router.get('/club/:id/courses', async (req, res) => {
@@ -341,6 +345,10 @@ router.post('/club/:id/course', async (req, res) => {
             message: error.message || '課程新增失敗'
         });
     }
+});
+//報名社課
+router.post('/club/:id/course/:CId',async (req,res)=>{
+
 });
 
 // 會議相關 API
