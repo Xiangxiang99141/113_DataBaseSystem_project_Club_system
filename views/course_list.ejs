@@ -50,9 +50,7 @@
                                 <span class="badge rounded-pill bg-secondary">報名已結束</span>
                             <% }else{ %>
                                 <% if(isLogin){ %>
-                                        <button class="btn btn-primary btn-sm" onclick="registerCourse('<%= course.Cc_id %>')">
-                                            報名
-                                        </button>
+                                    <a href="./signup?CId=<%= course.C_id %>&CCId=<%= course.Cc_id %>" class="btn btn-primary btn-sm">報名</a>
                                 <% }else{ %>
                                         <a class="btn btn-primary btn-sm" href="/login">
                                             登入後報名

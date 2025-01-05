@@ -49,9 +49,13 @@
                             <% if (activity.Ca_status=='已結束') { %>
                                 <span class="badge rounded-pill bg-secondary">報名已結束</span>
                             <% }else{ %>
-                                <button class="btn btn-primary btn-sm" onclick="registerActivity('<%= activity.Ca_id %>')">
-                                    報名
-                                </button>
+                                <% if(isLogin){ %>
+                                    <a href="./signup?CId=<%= activity.C_id %>&CAId=<%= activity.Ca_id %>" class="btn btn-primary btn-sm">報名</a>
+                                <% }else{ %>
+                                    <a class="btn btn-primary btn-sm" href="/login">
+                                        登入後報名
+                                    </a>
+                                <% } %>
                             <% } %>
                         </td>
                     </tr>
