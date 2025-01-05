@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>社團社課列表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('layouts/header-index') %>
+    
+    <div class="container mt-5">
+        <h1 class="mb-4">
+            <i class="fas fa-graduation-cap"></i> 社團課程列表
+        </h1>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <select id="clubFilter" class="form-select">
+                    <option value="">所有社團</option>
+                    <% clubs.forEach((club) => { %>
+                        <option value="<%= club.C_id %>"><%= club.C_name %></option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>社團名稱</th>
+                        <th>社課名稱</th>
+                        <th>時間</th>
+                        <th>地點</th>
+                        <th>人數</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="coursesTableBody">
+                    <% courses.forEach((course) => { %>
+                    <tr data-club-id="<%= course.C_id %>">
+                        <td><%= course.C_name %></td>
+                        <td><%= course.Cc_name %></td>
+                        <td><%= course.Cc_date %></td>
+                        <td><%= course.Cc_location %></td>
+                        <td><%= course.Cc_quota %></td>
+                        <td>
+                            <% if (course.Cc_status=='已結束') { %>
+                                <span class="badge rounded-pill bg-secondary">報名已結束</span>
+                            <% }else{ %>
+                                <% if(isLogin){ %>
+                                        <button class="btn btn-primary btn-sm" onclick="registerCourse('<%= course.Cc_id %>')">
+                                            報名
+                                        </button>
+                                <% }else{ %>
+                                        <a class="btn btn-primary btn-sm" href="/login">
+                                            登入後報名
+                                        </a>
+                                <% } %>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('clubFilter').addEventListener('change', function() {
+            const selectedClubId = this.value;
+            const rows = document.querySelectorAll('#coursesTableBody tr');
+            
+            rows.forEach(row => {
+                if (selectedClubId === '' || row.dataset.clubId === selectedClubId) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        function registerCourse(courseId) {
+            fetch(`/courses/register/${courseId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('報名成功！');
+                } else {
+                    alert('報名失敗：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('報名過程中發生錯誤');
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
