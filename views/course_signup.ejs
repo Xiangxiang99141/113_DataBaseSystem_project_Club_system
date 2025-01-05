@@ -18,7 +18,7 @@
             
             <div class="form-group">
                 <label for="courseContent">社課內容</label>
-                <textarea class="form-control" id="courseContent" name="courseContent" rows="4"  value="<%= course.content %>" disabled></textarea>
+                <textarea class="form-control" id="courseContent" name="courseContent" rows="4" disabled><%= course.Cc_content %></textarea>
             </div>
         </form>
         <% if(course.insurance) { %>
@@ -27,8 +27,9 @@
         <% if(course.transportation) { %>
             <%- include('layouts/SignupFormTransport') %>
         <% } %>
-            
-        <button type="submit" id="submitButton" class="btn btn-primary">提交報名</button>
+        <div class="mt-4">
+            <button type="submit" id="submitButton" class="btn btn-primary">提交報名</button>
+        </div>
     </div>
 
     
