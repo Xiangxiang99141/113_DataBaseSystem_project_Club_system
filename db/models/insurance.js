@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       Insurance.hasMany(models.Signup_record, {
         foreignKey: "Ins_id"
       });
+      Insurance.hasOne(models.Insurance_img,{
+        foreignKey:"Ins_id"
+      });
     }
   }
   Insurance.init({
@@ -42,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue:'中華民國'
     },
     Ins_idcardimg: {
-      type:DataTypes.STRING,
+      type:DataTypes.INTEGER,
       defaultValue:null
     },
     Ins_birthday: {

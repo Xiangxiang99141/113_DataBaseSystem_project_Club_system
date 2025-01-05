@@ -25,7 +25,7 @@ module.exports = {
         allowNull:false
       },
       Ins_idcardimg: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       Ins_birthday: {
         type: Sequelize.DATEONLY,
