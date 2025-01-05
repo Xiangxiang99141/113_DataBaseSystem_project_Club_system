@@ -19,15 +19,7 @@ router.get('/members', isAuthenticated, ManageController.getMembersView);
 router.get('/activities', isAuthenticated, ManageController.getActivitiesView);
 
 // 社課管理
-router.get('/courses', isAuthenticated, async (req, res) => {
-    try {
-        const courses = await Club_course.findAll();
-        res.render('courses/index', { courses });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Server Error');
-    }
-});
+router.get('/courses', isAuthenticated, ManageController.getCoursesView);
 
 // 會議管理
 router.get('/meetings', isAuthenticated, 
