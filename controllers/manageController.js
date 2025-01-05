@@ -298,6 +298,39 @@ exports.updateMemberJob = async (req,res) => {
 
 }
 
+exports.getCoursesView = async (req, res) => {    
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try {
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    Club_course.findAll({
+                        where:{
+                            C_id:req.query.id
+                        }
+                    }).then(courses=>{
+                        res.render('courses/index', {
+                            clubId:req.query.id,
+                            courses: courses,
+                            success:null,
+                            error:null
+                        });
+                    });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    })
+                }
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).send('Server Error');
+        }
+    }else{
+        //驗證是否為系統管理員
+    }
+}
+
 
 
 //檢查是否有這個社團的編輯權限
