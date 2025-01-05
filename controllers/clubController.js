@@ -458,7 +458,61 @@ exports.getActivitiesListView = async (req,res)=>{
 }
 
 exports.getCoursesListView = async (req,res) =>{
-    
+    try{
+        let is_login = false;
+        let user;
+        let courses;
+        if(req.cookies[COOKIE_NAME]){
+            user = await verification(req.cookies[COOKIE_NAME]);
+        }
+        if(user){
+            is_login = true;
+        }
+        let clubs = await getClubs();
+        Club_course.findAll({
+            attributed:[
+                'Cc_id',
+                'Cc_name',
+                'Cc_location',
+                'Cc_date',
+                'Cc_quota',
+                'Cc_open_at',
+                'Cc_close_at'],
+            include:[{
+                model:Club,
+                attributed:['C_id','C_name']
+            }],
+            nest:true,
+            raw:true
+        }).then(result=>{
+            courses = result.map(row=>({
+                    Cc_id:row.Cc_id,
+                    Cc_name:row.Cc_name,
+                    Cc_location:row.Cc_location,
+                    Cc_date:covertDate(row.Cc_date),
+                    Cc_quota:row.Cc_quota,
+                    Cc_status:isStrat(
+                        row.Cc_open_at,
+                        row.Cc_close_at
+                    ),
+                    C_name:row.Club.C_name,
+                    C_id:row.Club.C_id
+            }));
+            res.status(200).render('course_list',{
+                isLogin:is_login,
+                clubs:clubs,
+                courses:courses,
+                success:null,
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in getClub Courses:', error);
+        res.status(500).json({
+            success: false,
+            message: '社團課程獲取失敗'
+        });
+    }
 }
 
 
