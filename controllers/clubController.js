@@ -271,7 +271,6 @@ exports.createMeeting = (req,res) =>{
 }
 
 
-
 //獲取社團路由首頁
 exports.getHome = async (req,res)=>{
     let is_login = false;
@@ -515,7 +514,21 @@ exports.getCoursesListView = async (req,res) =>{
     }
 }
 
+exports.getActivitySignupView = async (req,res)=>{
+    //參數 CId=> 社團Id CAId =>課程Id
+    //pass
+}
 
+exports.getCourseSignupView = async (req,res)=>{
+    //參數 CId=> 社團Id CCId =>課程Id
+    if(req.query.CId && req.query.CCId){
+
+    }else{
+        res.status(200).render('error',{
+            message:'未找到社課'
+        })
+    }
+}
 
 exports.getClub = async (req,res) => {
     try{
