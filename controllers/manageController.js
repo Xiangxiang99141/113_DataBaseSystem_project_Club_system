@@ -13,7 +13,7 @@ const {Op, where, or} = require('sequelize');
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
 const moment = require('moment');
-
+const util = require('../util/util');
 
 exports.getview = async (req,res) => {
     user = await verification(req.cookies[COOKIE_NAME]);
@@ -307,8 +307,17 @@ exports.getCoursesView = async (req, res) => {
                     Club_course.findAll({
                         where:{
                             C_id:req.query.id
-                        }
+                        },
+                        nest:true,
+                        raw:true
                     }).then(courses=>{
+                        //轉換格式
+                        courses.forEach(course=>{
+                            course.Cc_date = util.covertDate(course.Cc_date);
+                            course.Cc_open_at = util.covertDate(course.Cc_open_at);
+                            course.Cc_close_at = util.covertDate(course.Cc_close_at);
+                        });
+                        
                         res.render('courses/index', {
                             clubId:req.query.id,
                             courses: courses,
