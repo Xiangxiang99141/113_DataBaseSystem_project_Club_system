@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <title>社課報名</title>
+</head>
+<body>
+    <%- include('layouts/header-index') %>
+    
+    <div class="container mt-4">
+        <h2>社課報名表</h2>
+        <form id="courseSignupFormHeader">
+            <div class="form-group">
+                <label for="courseName">社課名稱</label>
+                <input type="text" class="form-control" id="courseName" name="courseName" value="<%= course.Cc_name %>" disabled>
+            </div>
+            
+            <div class="form-group">
+                <label for="courseContent">社課內容</label>
+                <textarea class="form-control" id="courseContent" name="courseContent" rows="4"  value="<%= course.content %>" disabled></textarea>
+            </div>
+        </form>
+        <% if(course.insurance) { %>
+            <%- include('layouts/SignupFormInsurance') %>
+        <% } %>    
+        <% if(course.transportation) { %>
+            <%- include('layouts/SignupFormTransport') %>
+        <% } %>
+            
+        <button type="submit" id="submitButton" class="btn btn-primary">提交報名</button>
+    </div>
+
+    
+    <%- include('layouts/footer') %>
+    <script src="/js/course_signup.js"></script>
+</body>
+</html>
