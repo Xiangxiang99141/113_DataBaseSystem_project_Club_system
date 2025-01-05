@@ -13,6 +13,9 @@ router.get('/info',clubController.getInfoHome);
 //獲取社團資訊
 router.get('/info/:id',clubController.getInfo);
 
+router.get('/activity',clubController.getActivitiesListView)
+router.get('/course',clubController.getCoursesListView)
+
 // API: 報名社團（需要登入）
 router.post('/api/clubs/apply', isAuthenticated, clubController.applyClub);
 
