@@ -516,13 +516,92 @@ exports.getCoursesListView = async (req,res) =>{
 
 exports.getActivitySignupView = async (req,res)=>{
     //參數 CId=> 社團Id CAId =>課程Id
-    //pass
+    //passlet is_login = false;
+    let user;
+    if(req.cookies[COOKIE_NAME]){
+        user = await verification(req.cookies[COOKIE_NAME]);
+    }
+    if(user){
+        is_login = true;
+    }
+    //參數 CId=> 社團Id CCId =>課程Id
+    if(req.query.CId && req.query.CAId){
+        try{
+            Club_activity.findOne({
+                attributed:[
+                    'Ca_id',
+                    'Ca_content',
+                    'Ca_id',
+                    'Ca_location',
+                    'Ca_date',
+                    'insurance',
+                    'transportation',
+                    'C_id'
+                ],
+                where:{
+                    Ca_id:req.query.CAId,
+                    C_id:req.query.CId
+                },
+                nest:true,
+                raw:true
+            }).then((activity)=>{
+                res.status(200).render('activity_signup',{
+                    isLogin:is_login,
+                    activity:activity
+                });
+            });
+        }catch(error){
+            res.status(500).render('error',{
+                message:error
+            })
+        }
+    }else{
+        res.status(200).render('error',{
+            message:'未找到活動'
+        })
+    }
 }
 
 exports.getCourseSignupView = async (req,res)=>{
+    let is_login = false;
+    let user;
+    if(req.cookies[COOKIE_NAME]){
+        user = await verification(req.cookies[COOKIE_NAME]);
+    }
+    if(user){
+        is_login = true;
+    }
     //參數 CId=> 社團Id CCId =>課程Id
     if(req.query.CId && req.query.CCId){
-
+        try{
+            Club_course.findOne({
+                attributed:[
+                    'Cc_id',
+                    'Cc_id',
+                    'Cc_content',
+                    'Cc_location',
+                    'Cc_date',
+                    'insurance',
+                    'transportation',
+                    'C_id'
+                ],
+                where:{
+                    Cc_id:req.query.CCId,
+                    C_id:req.query.CId
+                },
+                nest:true,
+                raw:true
+            }).then((course)=>{
+                res.status(200).render('course_signup',{
+                    isLogin:is_login,
+                    course:course
+                });
+            });
+        }catch(error){
+            res.status(500).render('error',{
+                message:error
+            })
+        }
     }else{
         res.status(200).render('error',{
             message:'未找到社課'
