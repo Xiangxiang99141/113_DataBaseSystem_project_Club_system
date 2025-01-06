@@ -39,7 +39,7 @@ function signupCourse(ClubId,CourseId){
         mainFomrData.append('usetransport',false)
     }else{
         TransportFormData = new FormData(TransportForm);
-        mainFomrData.append('Usetransport',true)
+        mainFomrData.append('usetransport',true)
         TransportFormData.forEach((value,key)=>{
             mainFomrData.append(key,value);
         });
