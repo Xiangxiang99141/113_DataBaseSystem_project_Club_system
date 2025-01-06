@@ -3,17 +3,10 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const encryptoion = require('../util/encryption');
-const { v4: uuidv4 } = require('uuid');
 const clubController = require('../controllers/clubController');
 const memberController = require('../controllers/memberController');
-const manageController = require('../controllers/manageController');
 
 const uploadController = require('../controllers/uploadController');
-
-const auth = require('../middleware/auth');
-const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement, Insurance,Insurance_img,Signup_record,Transportation, Club_record} = require('../db/models');
-const verification = require('../util/verification');
 
 // 設置文件上傳
 const storage = multer.diskStorage({
