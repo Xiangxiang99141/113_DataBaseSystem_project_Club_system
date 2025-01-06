@@ -363,22 +363,25 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
     if(req.params.CId){
         user = await verification(req.cookies['auth_token']);
         try{
+            console.log(req.body);
             let insurance_img;
-            let insurance;
-            let transportation;
-            console.log(req.files['idcardImgFront'][0]);
-            let front = req.files['idcardImgFront'][0].filename || false
-            let obserse = req.files['idcardImgObverse'][0].filename || false
-            if(front!=false && obserse!=false){
-                insurance_img =await Insurance_img.create({
-                    front:`/uploads/misc/${front}`,
-                    obverse:`/uploads/misc/${obserse}`
-                });
-            }else{
-                insurance_img = false;
-            }
-
-            if(req.body.useinsurance){
+            let insurance = null;
+            let transportation = null;
+            
+            if(req.body.useinsurance == 'true'){
+                console.log(req.files);
+                if(req.files.length>0){
+                    let front = req.files['idcardImgFront'][0].filename || false
+                    let obserse = req.files['idcardImgObverse'][0].filename || false
+                    if(front!=false && obserse!=false){
+                        insurance_img =await Insurance_img.create({
+                            front:`/uploads/misc/${front}`,
+                            obverse:`/uploads/misc/${obserse}`
+                        });
+                    }
+                }else{
+                    insurance_img = false;
+                }
                 insurance = await Insurance.create({
                     Ins_isadult:req.body.isadult,
                     Ins_idcard:req.body.idcardnumber,
@@ -390,7 +393,7 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                     Ins_idcardimg:(insurance_img==false)?null:insurance_img.Insimg_id
                 });
             }
-            if(req.body.Usetransport){
+            if(req.body.Usetransport == 'true'){
                 transportation = await Transportation.create({
                     Ts_method:req.body.Transport
                 });
@@ -401,8 +404,8 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                 Su_type:'社課',
                 Ca_id:null,
                 Cc_id:req.params.CId,
-                Ins_id:insurance.Ins_id || null,
-                Ts_id:transportation.Ts_id || null,
+                Ins_id:(insurance != null )?insurance.Ins_id: null,
+                Ts_id:(transportation!=null)?transportation.Ts_id:null,
                 Su_create_at:new Date()
             }).then(
                 res.status(200).json({
