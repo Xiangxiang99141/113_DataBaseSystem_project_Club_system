@@ -3,7 +3,7 @@ const verification = require('../util/verification');
 const moment = require('moment')
 
 
-exports.loginInfo = (token)=>{
+function loginInfo(token){
     if(token){
         verification(token).then(user=>{
             if(user){
@@ -19,5 +19,6 @@ function covertDate(date,format='YYYY-MM-DD dddd'){
 }
 
 module.exports = {
-    covertDate:covertDate
+    covertDate:covertDate,
+    loginInfo:loginInfo
 }
