@@ -340,6 +340,32 @@ exports.getCoursesView = async (req, res) => {
     }
 }
 
+exports.getSignupView = async (req,res)=>{
+    try {
+        let islogin = util.loginInfo(req.cookies['auth_token']);
+        const signup_list = await Club_sign_record.findAll({
+            include:[{
+                model:Member,
+                attribes:['M_name']
+            }],
+            where:{
+                C_id:req.query.id
+            },
+            nest:true,
+            raw:true,
+            
+        });
+        res.render('signup-list',{
+            clubId:req.query.id,
+            signups:signup_list,
+            isLogin:islogin,
+            error:null,
+            success:null
+        })
+    } catch (error) {
+        res.render('error',{message:error})
+    }
+}
 
 
 //檢查是否有這個社團的編輯權限
