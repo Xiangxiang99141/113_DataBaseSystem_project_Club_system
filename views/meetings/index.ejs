@@ -108,7 +108,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="createMeetingBtn">新增</button>
+                <button type="button" class="btn btn-primary" id="createMeetingBtn" onclick="addmeeting('<%= clubId %>')">新增</button>
             </div>
         </div>
     </div>
@@ -139,58 +139,61 @@
 </div>
 
 <script>
-document.getElementById('createMeetingBtn').addEventListener('click', async function() {
-    try {
-        // 獲取表單數據
-        const form = document.getElementById('addMeetingForm');
-        const formData = new FormData(form);
-        const meetingData = Object.fromEntries(formData.entries());
+    async function addmeeting(clubId) {
+        try {
+            // 獲取表單數據
+            const form = document.getElementById('addMeetingForm');
+            const formData = new FormData(form);
+            const meetingData = Object.fromEntries(formData.entries());
 
-        // 發送 AJAX 請求
-        const response = await fetch('../../api/create/meetings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(meetingData)
-        });
+            // 發送 AJAX 請求
+            const response = await fetch(`/api/club/${clubId}/meeting`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(meetingData)
+            });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (result.success) {
-            // 關閉 Modal
-            bootstrap.Modal.getInstance(document.getElementById('addMeetingModal')).hide();
-            
-            // 顯示成功訊息
+            if (result.success) {
+                // 關閉 Modal
+                bootstrap.Modal.getInstance(document.getElementById('addMeetingModal')).hide();
+                
+                // 顯示成功訊息
+                const alertHtml = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        會議新增成功
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+
+                // 重新載入會議列表
+                location.reload();
+            } else {
+                throw new Error(result.message || '新增失敗');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // 顯示錯誤訊息
             const alertHtml = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    會議新增成功
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${error.message || '新增會議時發生錯誤'}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
             document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
-
-            // 重新載入會議列表
-            location.reload();
-        } else {
-            throw new Error(result.message || '新增失敗');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        // 顯示錯誤訊息
-        const alertHtml = `
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                ${error.message || '新增會議時發生錯誤'}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHtml);
+        }  
     }
-});
+// document.getElementById('createMeetingBtn').addEventListener('click', async function() {
+    
+// });
 
 // 清除 Modal 表單
 document.getElementById('addMeetingModal').addEventListener('hidden.bs.modal', function () {
