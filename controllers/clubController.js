@@ -405,6 +405,7 @@ exports.getInfo = async (req,res) => {
     }
 }
 
+//顯示活動頁面
 exports.getActivitiesListView = async (req,res)=>{
     try{
         let is_login = false;
@@ -456,6 +457,7 @@ exports.getActivitiesListView = async (req,res)=>{
     }
 }
 
+//顯示社課頁面
 exports.getCoursesListView = async (req,res) =>{
     try{
         let is_login = false;
@@ -514,6 +516,7 @@ exports.getCoursesListView = async (req,res) =>{
     }
 }
 
+//顯示活動報名畫面
 exports.getActivitySignupView = async (req,res)=>{
     //參數 CId=> 社團Id CAId =>課程Id
     //passlet is_login = false;
@@ -562,6 +565,7 @@ exports.getActivitySignupView = async (req,res)=>{
     }
 }
 
+//顯示社課報名畫面
 exports.getCourseSignupView = async (req,res)=>{
     let is_login = false;
     let user;
