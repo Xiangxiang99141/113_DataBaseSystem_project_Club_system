@@ -54,7 +54,7 @@ function signupCourse(ClubId,CourseId){
             response.json().then(result=>{
                 if(result.success==true){
                     alert('報名成功');
-                    location.href('/club/course');
+                    location.href = '/club/course' ;
                 };
             });
         }
