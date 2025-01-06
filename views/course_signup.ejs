@@ -28,7 +28,7 @@
             <%- include('layouts/SignupFormTransport') %>
         <% } %>
         <div class="mt-4">
-            <button type="submit" id="submitButton" class="btn btn-primary">提交報名</button>
+            <button type="submit" id="submitButton" onclick="signupCourse('<%= course.C_id%>','<%= course.Cc_id%>')" class="btn btn-primary">提交報名</button>
         </div>
     </div>
 
