@@ -1,12 +1,21 @@
-const { raw } = require('mysql2');
-const { Club, 
-    Club_member,
-    Member,
-    Club_meeting,
-    Club_equipment,
+const { 
     Club_activity,
+    Club_announcement,
     Club_course,
-    Club_sign_record} = require('../db/models');
+    Club_equipment,
+    Club_history,
+    Club_meeting_participate_member,
+    Club_meeting_record,
+    Club_meeting,
+    Club_member,
+    Club_record,
+    Club_sign_record,
+    Club, 
+    Insurance_img,
+    Insurance,
+    Member,
+    Signup_record,
+    Transportation,} = require('../db/models');
 const { Op, where, Model } = require('sequelize');
 const { cache } = require('ejs');
 const e = require('connect-flash');
@@ -233,8 +242,8 @@ exports.getPermissions = (req,res)=>{
         res.send(e)
     });
 }
-
-exports.getMeetings = (req,res) =>{
+//獲取會議列表畫面
+exports.getMeetingsView = (req,res) =>{
     try{
         getClubMember().then(club_member=>{
             getmeetings().
@@ -252,7 +261,7 @@ exports.getMeetings = (req,res) =>{
     }
 
 }
-
+//新增會議
 exports.createMeeting = (req,res) =>{
     const {name,content,location,userId,clubId} = req.body;
     try {
@@ -612,7 +621,7 @@ exports.getCourseSignupView = async (req,res)=>{
         })
     }
 }
-
+//獲取社團列表
 exports.getClub = async (req,res) => {
     try{
         const club = await Club.findByPk(req.params.id,{
@@ -671,6 +680,472 @@ exports.updateClub = async (req,res) => {
         });
     }
 }
+//獲取社團成員
+exports.getClubMembers = async (req,res)=>{
+    try {
+        const clubMembers = await Club_member.findAll({
+            where:{C_id:req.params.id},
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name']
+            }]
+        });
+        res.json({
+            success: true,
+            message: '社團成員列表查詢成功',
+            data: clubMembers
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message || '查詢失敗',
+        });
+    }
+    
+}
+//新增社員
+exports.addClubMember = async (req,res)=>{
+    try {
+        //新增社團成員
+        const clubMember = await Club_member.create({
+            C_id:req.params.id,
+            M_id:req.body.userId,
+            Cme_job:req.body.job,
+            Cme_member_join_at:new Date()
+        });
+        //新增報名紀錄
+        const clubSignRecord = await Club_sign_record.create({
+            M_id:req.body.userId,
+            C_id:req.params.id,
+            is_verify:true,
+            signup_cause:'由社團幹部新增',
+            signup_at:new Date()
+        });
+        //如果都新增成功才回傳成功
+        if(clubMember && clubSignRecord){
+            res.status(200).json({
+                success: true,
+                message: '社團成員新增成功',
+                data: clubMember
+            });
+        }else{
+            res.json({
+                success: false,
+                message: '伺服器錯誤'
+            });
+        };
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message ||'社團報名失敗'
+        });
+    }
+}
+//獲取社團活動
+exports.getClubActivity = async (req, res) => {
+    try {
+        const activities = await Club_activity.findAll({
+            where: { C_id: req.params.id },
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            }]
+        });
+
+        res.json({
+            success: true,
+            message: '活動獲取成功',
+            data: activities
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取活動失敗'
+        });
+    }
+}
+//獲取社團公告
+exports.getAnnouncements = async (req,res)=>{
+    try {
+        const announcements = await Club_announcement.findAll({
+            where:{C_id:req.params.id},
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            }],
+            //排序
+            order:[['Can_created_at','DESC']]
+        });
+        res.json({
+            success: true,
+            message: '獲取公告成功',
+            data: announcements
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取公告失敗'
+        });
+    } 
+}
+//獲取社團歷史資料
+exports.getHistories = async (req,res)=>{
+    try {
+        const histories = await Club_history.findAll({
+            where:{C_id:req.params.id},
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            }]
+        });
+        res.json({
+            success: true,
+            message: '資料獲取成功',
+            data: histories
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '資料獲取失敗'
+        });
+    }
+}
+//獲取所有器材
+exports.getEquipments = async (req, res) => {
+    try {
+        const equipment = await Club_equipment.findAll({
+            where:{
+                C_id:req.params.id
+            },
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name','M_id']
+            }]
+        });
+        res.json({
+            success: true,
+            message: '器材獲取成功',
+            data: equipment
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取器材失敗'
+        });
+    }
+}
+//獲取單一器材
+exports.getEquipment = async (req, res) => {
+    try {
+        const equipment = await Club_equipment.findOne({
+            where:{
+                Ce_id:req.params.eid,
+                C_id:req.params.id
+            },
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name','M_id']
+            }]
+        });
+        res.status(200).json({
+            success: true,
+            message: '器材獲取成功',
+            data: equipment
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取器材失敗'
+        });
+    }
+}
+//更新器材
+exports.updateEquipment = async (req, res) => {
+    try {
+        const equipment = await Club_equipment.update({
+            Ce_name: req.body.name,
+            Ce_count: req.body.quantity,
+            Ce_spec: req.body.spec,
+            Ce_use: req.body.use,
+            Ce_source: req.body.source,
+            Ce_admin: req.body.admin,
+            Ce_report: req.body.report,
+            Ce_purch_at: req.body.date ? new Date(req.body.date) : new Date()
+        }, {
+            where: {
+                Ce_id: req.params.eid,
+                C_id: req.params.id
+            }
+        });
+
+        res.json({
+            success: true,
+            message: '器材更新成功',
+            data: equipment
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '更新器材時發生錯誤'
+        });
+    }
+}
+
+
+//新增會議記錄
+exports.addMeeting = async (req, res) => {
+    try {
+        const meeting = await Club_meeting.create({
+            Cm_name: req.body.name,
+            Cm_chair: req.body.chair,
+            Cm_content: req.body.content,
+            Cm_location: req.body.location,
+            Cm_date_at: new Date(req.body.datetime),
+            C_id: req.params.id
+        });
+
+        res.json({
+            success: true,
+            message: '會議新增成功',
+            data: meeting
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '新增會議時發生錯誤'
+        });
+    }
+}
+//獲取會議記錄
+exports.getMeetings = async (req,res)=>{
+    try {
+        const meetings = await Club_meeting.findAll({
+            where:{C_id:req.params.id},
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            },{
+                model:Member,
+                attributes:['M_name']
+            }],
+            nest:true,
+            raw:true
+        });
+        res.json({
+            success: true,
+            message: '會議查詢結果',
+            data: meetings
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '查尋會議時發生錯誤'
+        });
+    }
+    
+}
+
+//報名社課
+exports.signupCourse = async (req,res)=>{
+    if(req.params.CId){
+        user = await verification(req.cookies['auth_token']);
+        try{
+            let insurance_img;
+            let insurance = null;
+            let transportation = null;
+            
+            //判斷有無保險資料
+            if(req.body.useinsurance == 'true'){
+                console.log(req.files);
+                if(req.files.length>0){
+                    let front = req.files['idcardImgFront'][0].filename
+                    let obserse = req.files['idcardImgObverse'][0].filename
+                    if(front!=false && obserse!=false){
+                        insurance_img =await Insurance_img.create({
+                            front:`/uploads/misc/${front}`,
+                            obverse:`/uploads/misc/${obserse}`
+                        });
+                    }
+                }else{
+                    insurance_img = false;
+                }
+                insurance = await Insurance.create({
+                    Ins_isadult:req.body.isadult,
+                    Ins_idcard:req.body.idcardnumber,
+                    Ins_nationality:req.body.nationality,
+                    Ins_birthday:req.body.birthday,
+                    Ins_liaison:(req.body.liaison=='')?null:req.body.liaison,
+                    Ins_liaisonPhone:(req.body.liaisonPhone=='')?null:req.body.liaisonPhone,
+                    Ins_engname:(req.body.engname=='')?null:req.body.engname,
+                    Ins_idcardimg:(insurance_img==false)?null:insurance_img.Insimg_id
+                });
+            }
+
+            //判斷有無交通資料
+            if(req.body.usetransport == 'true'){
+                transportation = await Transportation.create({
+                    Ts_method:req.body.Transport
+                });
+            }
+
+            Signup_record.create({
+                M_id:user.userId,
+                Su_type:'社課',
+                Ca_id:null,
+                Cc_id:req.params.CId,
+                Ins_id:(insurance != null )?insurance.Ins_id: null,
+                Ts_id:(transportation!=null)?transportation.Ts_id:null,
+                Su_create_at:new Date()
+            }).then(
+                Club_record.create({
+                    M_id:user.userId,
+                    Cr_type:'社課',
+                    Ca_id:null,
+                    Cc_id:req.params.CId,
+                    Cr_comment:'',
+                    Cr_vote:'非常滿意',
+                    C_id:req.params.id
+                }).then(
+                    res.status(200).json({
+                        success: true,
+                        message: '社課報名成功',
+                    })
+                )
+                
+            );
+
+        }catch(error){
+            console.log(error.message);
+            res.status(500).json({
+                success:false,
+                message: error.message || '伺服器錯誤'
+            });
+        };
+
+    }else{
+        console.log('Error:未找到可報名課程')
+    }
+}
+//新增社課
+exports.addCourse = async (req, res) => {
+    try {
+        const courses = await Club_course.create({
+            Cc_name:req.body.name,
+            Cc_content:req.body.content,
+            Cc_location:req.body.location,
+            Cc_date:new Date(req.body.datetime),
+            Cc_quota:req.body.quota,
+            Cc_open_at:new Date(req.body.open),
+            Cc_close_at:new Date(req.body.close),
+            insurance:req.body.insurance,
+            transportation:req.body.transportation,
+            C_id:req.params.id
+        });
+        res.json({
+            success: true,
+            message: '課程新增成功',
+            data: courses
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '課程新增失敗'
+        });
+    }
+}
+//獲取社課
+exports.getCourse = async (req, res) => {
+    try {
+        const courses = await Club_course.findAll({
+            where:{C_id:req.params.id},
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            }],
+            nest:true,
+            raw:true
+        });
+        res.json({
+            success: true,
+            message: '課程獲取成功',
+            data: courses
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取課程失敗'
+        });
+    }
+}
+
+//報名活動
+exports.signupActivity = async (req,res)=>{
+    if(req.params.AId){
+        console.log(req.body);
+    }else{
+        console.log('Error:未找到可報名活動')
+        res.status(500).json({
+            success:false,
+            message: '未找到可報名活動'
+        });
+    }
+}
+//新增活動
+exports.addActivity = async (req, res) => {
+    try {
+        const courses = await Club_activity.create({
+            Ca_name:req.body.name,
+            Ca_content:req.body.content,
+            Ca_location:req.body.location,
+            Ca_date:new Date(req.body.datetime),
+            Ca_quota:req.body.quota,
+            Ca_open_at:new Date(req.body.open),
+            Ca_close_at:new Date(req.body.close),
+            insurance:req.body.insurance,
+            transportation:req.body.transportation,
+            Ca_plan:req.file ? `/uploads/activityplan/${req.file.filename}` : null,
+            C_id:req.params.id
+        });
+        res.json({
+            success: true,
+            message: '活動新增成功',
+            data: courses
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '活動新增失敗'
+        });
+    }
+}
+
 //判斷活動是否可報名
 //時間內可報名，當天顯示即將開始
 function isStrat(open,close,date){
