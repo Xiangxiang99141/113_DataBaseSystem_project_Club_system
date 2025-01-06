@@ -12,7 +12,8 @@ const manageController = require('../controllers/manageController');
 const uploadController = require('../controllers/uploadController');
 
 const auth = require('../middleware/auth');
-const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement} = require('../db/models');
+const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement, Insurance,Insurance_img,Signup_record,Transportation} = require('../db/models');
+const verification = require('../util/verification');
 
 // 設置文件上傳
 const storage = multer.diskStorage({
@@ -288,8 +289,16 @@ router.post('/club/:id/activity', upload.single('plan'),async (req, res) => {
     }
 });
 //報名活動
-router.post('/club/:id/course/:CId',async (req,res)=>{
-
+router.post('/club/:id/activity/signup/:AId',async (req,res)=>{
+    if(req.params.AId){
+        console.log(req.body);
+    }else{
+        console.log('Error:未找到可報名活動')
+        res.status(500).json({
+            success:false,
+            message: '未找到可報名活動'
+        });
+    }
 });
 
 // 社課相關 API
@@ -347,8 +356,75 @@ router.post('/club/:id/course', async (req, res) => {
     }
 });
 //報名社課
-router.post('/club/:id/course/:CId',async (req,res)=>{
+router.post('/club/:id/course/signup/:CId',upload.fields([
+    {name:'idcardImgFront',maxCount:1},
+    {name:'idcardImgObverse',maxCount:1}
+]),async (req,res)=>{
+    if(req.params.CId){
+        user = await verification(req.cookies['auth_token']);
+        try{
+            let insurance_img;
+            let insurance;
+            let transportation;
+            console.log(req.files['idcardImgFront'][0]);
+            let front = req.files['idcardImgFront'][0].filename || false
+            let obserse = req.files['idcardImgObverse'][0].filename || false
+            if(front!=false && obserse!=false){
+                insurance_img =await Insurance_img.create({
+                    front:`/uploads/misc/${front}`,
+                    obverse:`/uploads/misc/${obserse}`
+                });
+            }else{
+                insurance_img = false;
+            }
 
+            if(req.body.useinsurance){
+                insurance = await Insurance.create({
+                    Ins_isadult:req.body.isadult,
+                    Ins_idcard:req.body.idcardnumber,
+                    Ins_nationality:req.body.nationality,
+                    Ins_birthday:req.body.birthday,
+                    Ins_liaison:(req.body.liaison=='')?null:req.body.liaison,
+                    Ins_liaisonPhone:(req.body.liaisonPhone)?null:req.body.liaisonPhone,
+                    Ins_engname:(req.body.engname=='')?null:req.body.engname,
+                    Ins_idcardimg:(insurance_img==false)?null:insurance_img.Insimg_id
+                });
+            }
+            if(req.body.Usetransport){
+                transportation = await Transportation.create({
+                    Ts_method:req.body.Transport
+                });
+            }
+
+            Signup_record.create({
+                M_id:user.userId,
+                Su_type:'社課',
+                Ca_id:null,
+                Cc_id:req.params.CId,
+                Ins_id:insurance.Ins_id || null,
+                Ts_id:transportation.Ts_id || null,
+                Su_create_at:new Date()
+            }).then(
+                res.status(200).json({
+                    success: true,
+                    message: '社課報名成功',
+                })
+            );
+
+
+
+        }catch(error){
+            console.log(error.message);
+            res.status(500).json({
+                success:false,
+                message: error.message || '伺服器錯誤'
+            });
+        };
+
+
+    }else{
+        console.log('Error:未找到可報名課程')
+    }
 });
 
 // 會議相關 API
