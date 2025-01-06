@@ -45,32 +45,7 @@ router.get('/meetings', isAuthenticated,
 router.get('/equipment',isAuthenticated,ManageController.getEquipmentsView);
 
 //顯示報名列表
-router.get('/signup', isAuthenticated, async (req,res)=>{
-    try {
-        let islogin = util.loginInfo(req.cookies['auth_token']);
-        const signup_list = await Club_sign_record.findAll({
-            include:[{
-                model:Member,
-                attribes:['M_name']
-            }],
-            where:{
-                C_id:req.query.id
-            },
-            nest:true,
-            raw:true,
-            
-        });
-        res.render('signup-list',{
-            clubId:req.query.id,
-            signups:signup_list,
-            isLogin:islogin,
-            error:null,
-            success:null
-        })
-    } catch (error) {
-        res.render('error',{message:error})
-    }
-});
+router.get('/signup', isAuthenticated, ManageController.getSignupView);
 
 router.get('/records', isAuthenticated,ManageController.getRecordsView);
 module.exports = router;
