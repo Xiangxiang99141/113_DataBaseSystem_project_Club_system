@@ -92,7 +92,11 @@
                                     <% } %>
                                         
                                 <% } else { %>
-                                    <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
+                                    <div class="btn-group w-100" role="group">
+                                        <a class="btn btn-outline-primary w-100" href="/login">登入後報名</a>
+                                        <a class="btn btn-primary w-100" href="/club/info/<%= club.C_id %>">查看社團</a>
+                                    </div>
+                                    
                                 <% } %>
                             </div>
                         </div>
