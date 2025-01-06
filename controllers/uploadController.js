@@ -1,6 +1,7 @@
-const { Club_announcement, Club_history} = require('../db/models');
+const { Club_announcement, Club_history,Club_equipment} = require('../db/models');
 
-exports.Upload_announcement = async (req, res) => {
+//新增公告
+exports.uploadAnnouncement = async (req, res) => {
     try {
         const announcement = await Club_announcement.create({
             Can_type: req.body.type,
@@ -26,8 +27,8 @@ exports.Upload_announcement = async (req, res) => {
     }
 }
 
-
-exports.Upload_history = async (req,res)=>{
+//新增歷史資料
+exports.uploadHistory = async (req,res)=>{
     try{
         let path = req.file ? `/uploads/histories/${req.file.filename}` : null;
         console.log(path)
@@ -52,3 +53,42 @@ exports.Upload_history = async (req,res)=>{
         });
     }
 };
+
+exports.uploadEquipent = async (req, res) => {
+    try {
+        const { name, quantity, spec, use, source, admin, date ,report} = req.body;
+        
+        if (!name || !quantity || !spec || !use || !source || !admin || !report) {
+            return res.status(400).json({
+                success: false,
+                message: '所有欄位都是必填的'
+            });
+        }
+
+        const equipment = await Club_equipment.create({
+            Ce_name: name,
+            Ce_count: quantity,
+            Ce_spec: spec,
+            Ce_use: use,
+            Ce_source: source,
+            Ce_img: req.file ? `/uploads/equipments/${req.file.filename}` : null,
+            Ce_admin: admin,
+            Ce_report: report,
+            Ce_purch_at: date ? new Date(date) : new Date(),
+            C_id: req.params.id
+        });
+
+        res.json({
+            success: true,
+            message: '器材新增成功',
+            data: equipment
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '新增器材時發生錯誤'
+        });
+    }
+}
