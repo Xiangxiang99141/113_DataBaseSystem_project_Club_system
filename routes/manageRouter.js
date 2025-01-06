@@ -53,11 +53,15 @@ router.get('/signup', isAuthenticated, async (req,res)=>{
                 model:Member,
                 attribes:['M_name']
             }],
+            where:{
+                C_id:req.query.id
+            },
             nest:true,
             raw:true,
             
         });
         res.render('signup-list',{
+            clubId:req.query.id,
             signups:signup_list,
             isLogin:islogin,
             error:null,
