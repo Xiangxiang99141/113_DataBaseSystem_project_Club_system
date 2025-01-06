@@ -23,7 +23,7 @@ router.get('/courses', isAuthenticated, ManageController.getCoursesView);
 
 // 會議管理
 router.get('/meetings', isAuthenticated, 
-    ClubController.getMeetingsView
+    ManageController.getMeetingsView
     // async (req, res) => {
     // try {
     //     const meetings = await Club_meeting.findAll({
