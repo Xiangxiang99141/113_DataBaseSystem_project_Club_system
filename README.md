@@ -24,3 +24,7 @@
 
 + Docker
   1. `docker build -t 113-club-system .`
+ 
+ docker run --name mariadb --env MARIADB_USER=clubsystem --env MARIADB_PASSWORD=clubsystem --env MARIADB_DATABASE=club_system --env MARIADB_ROOT_PASSWORD=password -p 3306:3306 -d sha256:a3c3ecdba222d33017b1128ae2a5930a3d6b8b21cd6d5e534886e75a523612ee
+
+ $ docker run --detach --name mariadb --env MARIADB_USER=clubsystem --env MARIADB_PASSWORD=clubsystem --env MARIADB_DATABASE=club_system --env MARIADB_ROOT_PASSWORD=password   -p 3306:3306 mariadb:latest

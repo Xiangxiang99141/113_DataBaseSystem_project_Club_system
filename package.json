@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start:dev": "nodemon app.js",
-    "start": "npm run migrate-db && node app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
