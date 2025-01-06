@@ -21,3 +21,6 @@
   1. Express
   2. Mysql2
   3. EJS
+
++ Docker
+  1. `docker build -t 113-club-system .`
