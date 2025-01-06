@@ -12,7 +12,7 @@ const manageController = require('../controllers/manageController');
 const uploadController = require('../controllers/uploadController');
 
 const auth = require('../middleware/auth');
-const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement, Insurance,Insurance_img,Signup_record,Transportation} = require('../db/models');
+const { Club_sign_record, Club_meeting, Club_equipment, Member, Club, Club_member, Club_activity, Club_course, Club_history, Club_announcement, Insurance,Insurance_img,Signup_record,Transportation, Club_record} = require('../db/models');
 const verification = require('../util/verification');
 
 // 設置文件上傳
@@ -394,7 +394,7 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                     Ins_idcardimg:(insurance_img==false)?null:insurance_img.Insimg_id
                 });
             }
-            
+
             //判斷有無交通資料
             if(req.body.Usetransport == 'true'){
                 transportation = await Transportation.create({
@@ -411,10 +411,21 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                 Ts_id:(transportation!=null)?transportation.Ts_id:null,
                 Su_create_at:new Date()
             }).then(
-                res.status(200).json({
-                    success: true,
-                    message: '社課報名成功',
-                })
+                Club_record.create({
+                    M_id:user.userId,
+                    Cr_type:'社課',
+                    Ca_id:null,
+                    Cc_id:req.params.CId,
+                    Cr_comment:'',
+                    Cr_vote:'非常滿意',
+                    C_id:req.params.id
+                }).then(
+                    res.status(200).json({
+                        success: true,
+                        message: '社課報名成功',
+                    })
+                )
+                
             );
 
         }catch(error){
