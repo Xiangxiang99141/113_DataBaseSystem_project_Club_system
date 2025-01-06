@@ -242,25 +242,6 @@ exports.getPermissions = (req,res)=>{
         res.send(e)
     });
 }
-//獲取會議列表畫面
-exports.getMeetingsView = (req,res) =>{
-    try{
-        getClubMember().then(club_member=>{
-            getmeetings().
-            then((meetings)=>{
-                res.render('meetings/index',{
-                    meetings:meetings,
-                    members:club_member,
-                    success:null,
-                    error:null
-                });
-            });
-        });
-    }catch(e){
-        res.send(e);
-    }
-
-}
 //新增會議
 exports.createMeeting = (req,res) =>{
     const {name,content,location,userId,clubId} = req.body;
@@ -1165,19 +1146,35 @@ function covertDate(date){
 }
 
 async function getmeetings(clubId=null){
+    let meetings;
     try{ 
-        const meetings = await Club_meeting.findAll({
-            attributes:['Cm_name','Cm_content','Cm_location'],
-            include:[{
-                model:Club,
-                attributes:['C_name']
-            },{
-                model:Member,
-                attributes:['M_name']
-            }],
-            nest:true,
-            raw:true
-    });
+        if(clubId!=null){
+            meetings = await Club_meeting.findAll({
+                attributes:['Cm_name','Cm_content','Cm_location'],
+                include:[{
+                    model:Club,
+                    attributes:['C_name']
+                },{
+                    model:Member,
+                    attributes:['M_name']
+                }],
+                nest:true,
+                raw:true
+            });
+        }else{
+            meetings = await Club_meeting.findAll({
+                attributes:['Cm_name','Cm_content','Cm_location'],
+                include:[{
+                    model:Club,
+                    attributes:['C_name']
+                },{
+                    model:Member,
+                    attributes:['M_name']
+                }],
+                nest:true,
+                raw:true
+            });
+        }
         return meetings;
     }catch(e){
         console.log(`Get Error : '${e}'`);
@@ -1215,19 +1212,38 @@ async function getEquipment(clubId=null){
     return equipents;
 }
 
-async function getClubMember(){
-    const club_member = await Club_member.findAll({
-        attributes:['M_id','Cme_job'],
-        include:[{
-            model:Member,
-            attributes:['M_name']
-        },{
-            model:Club,
-            attributes:['C_name']
-        }],
-        nest:true,
-        raw:true
-    });
+async function getClubMember(clubId=null){
+    let club_member;
+    if(club_member != null){
+        club_member = await Club_member.findAll({
+            attributes:['M_id','Cme_job'],
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            },{
+                model:Club,
+                attributes:['C_name']
+            }],
+            where:{
+                C_id:clubId
+            },
+            nest:true,
+            raw:true
+        });
+    }else{
+        club_member = await Club_member.findAll({
+            attributes:['M_id','Cme_job'],
+            include:[{
+                model:Member,
+                attributes:['M_name']
+            },{
+                model:Club,
+                attributes:['C_name']
+            }],
+            nest:true,
+            raw:true
+        });
+    }
     return club_member;
 }
 
