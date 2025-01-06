@@ -3,7 +3,7 @@ const { Club, Club_member, Club_sign_record} = require('../db/models');
 const verification = require('../util/verification');
 const COOKIE_NAME = 'auth_token';
 
-exports.Renderindex = async (req,res)=>{
+exports.renderIndex = async (req,res)=>{
     let clubs;
     try{
         //依照是否有篩選決定是否加入where
@@ -103,4 +103,23 @@ exports.Renderindex = async (req,res)=>{
         });
     }
 };
+
+exports.loginView = (req, res) => {
+    if(req.cookies['auth_token']){
+        const user = verification(req.cookies['auth_token']);
+        if(user){
+            res.redirect('/');
+            return;
+        }else{
+            res.render('login', { error: req.flash('error','認證失敗，請重新登入') });
+        }
+        
+    }else{
+        res.render('login', { error: req.flash('error') });
+    }
+}
+
+exports.signupView = (req, res) => {
+    res.render('signup', { error: false });
+}
 
