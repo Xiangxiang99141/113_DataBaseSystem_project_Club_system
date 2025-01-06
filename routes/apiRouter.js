@@ -368,11 +368,12 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
             let insurance = null;
             let transportation = null;
             
+            //判斷有無保險資料
             if(req.body.useinsurance == 'true'){
                 console.log(req.files);
                 if(req.files.length>0){
-                    let front = req.files['idcardImgFront'][0].filename || false
-                    let obserse = req.files['idcardImgObverse'][0].filename || false
+                    let front = req.files['idcardImgFront'][0].filename
+                    let obserse = req.files['idcardImgObverse'][0].filename
                     if(front!=false && obserse!=false){
                         insurance_img =await Insurance_img.create({
                             front:`/uploads/misc/${front}`,
@@ -393,6 +394,8 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                     Ins_idcardimg:(insurance_img==false)?null:insurance_img.Insimg_id
                 });
             }
+            
+            //判斷有無交通資料
             if(req.body.Usetransport == 'true'){
                 transportation = await Transportation.create({
                     Ts_method:req.body.Transport
@@ -414,8 +417,6 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                 })
             );
 
-
-
         }catch(error){
             console.log(error.message);
             res.status(500).json({
@@ -423,7 +424,6 @@ router.post('/club/:id/course/signup/:CId',upload.fields([
                 message: error.message || '伺服器錯誤'
             });
         };
-
 
     }else{
         console.log('Error:未找到可報名課程')
