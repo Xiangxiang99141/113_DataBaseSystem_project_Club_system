@@ -212,3 +212,79 @@ exports.update = (req,res) =>{
         })
     }
 }
+
+//註冊
+exports.signup = async (req, res) => {
+    try {
+        const { account, name, password, phone, email } = req.body;
+
+        // 驗證必填欄位
+        if (!account || !name || !password) {
+            return res.status(400).json({
+                success: false,
+                message: '帳號、姓名和密碼為必填欄位'
+            });
+        }
+        
+        //加密
+        const hashpwd = encryptoion(password);
+
+        // 創建及檢查新會員
+        const [member, create] = await Member.findOrCreate({
+            attributes:['M_id','M_account','M_name','M_phone','email','M_register_at'],
+            where: {
+                M_account: account,
+            },
+            defaults: {
+                M_id: uuidv4(),
+                M_account: account,
+                M_name: name,
+                M_pwd: hashpwd,
+                M_phone: phone || null,
+                email: email || null,
+                M_register_at: new Date()
+            }
+        });
+        
+        if(create) {
+            res.json({
+                success: true,
+                message: '註冊成功',
+                user:member
+            });
+        } else {
+            res.json({
+                success: false,
+                message: '此帳號已被註冊'
+            });
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '註冊時發生錯誤'
+        });
+    }
+}
+
+exports.getMember = async (req,res)=>{
+    try {
+        const members = await Member.findAll({
+            attributes:['M_id','M_name'],
+            raw:true,
+            nest:true
+        });
+        res.status(200).json({
+            success: true,
+            message: '獲取成員成功',
+            data: members
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取成員失敗'
+        });
+    }
+}
