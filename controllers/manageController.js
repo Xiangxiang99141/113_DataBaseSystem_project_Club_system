@@ -367,7 +367,40 @@ exports.getSignupView = async (req,res)=>{
     }
 }
 
+//獲取會議列表畫面
+exports.getMeetingsView = async (req,res) =>{
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try{
+            HasPermissions(user.userId,req.query.id).then((isAdmin)=>{
+                if(isAdmin){
+                    getClubMember(req.query.id).
+                    then(club_member=>{
+                        getmeetings(req.query.id).
+                        then((meetings)=>{
+                            res.render('meetings/index',{
+                                clubId:req.query.id,
+                                meetings:meetings,
+                                members:club_member,
+                                success:null,
+                                error:null
+                            });
+                        });
+                    });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
+            });
+        }catch(e){
+            res.send(e);
+        }
+    }else{
+        //驗證是否為系統管理員
+    }
 
+}
 //檢查是否有這個社團的編輯權限
 async function HasPermissions(userId,clubId){
     const member = await Club_member.findOne({
@@ -542,3 +575,39 @@ async function getRecord(clubId=null,userId=null){
     }
     return records;
 }
+
+async function getmeetings(clubId=null){
+    let meetings;
+    try{ 
+        if(clubId!=null){
+            meetings = await Club_meeting.findAll({
+                attributes:['Cm_name','Cm_content','Cm_location'],
+                include:[{
+                    model:Club,
+                    attributes:['C_name']
+                },{
+                    model:Member,
+                    attributes:['M_name']
+                }],
+                nest:true,
+                raw:true
+            });
+        }else{
+            meetings = await Club_meeting.findAll({
+                attributes:['Cm_name','Cm_content','Cm_location'],
+                include:[{
+                    model:Club,
+                    attributes:['C_name']
+                },{
+                    model:Member,
+                    attributes:['M_name']
+                }],
+                nest:true,
+                raw:true
+            });
+        }
+        return meetings;
+    }catch(e){
+        console.log(`Get Error : '${e}'`);
+    }
+};
