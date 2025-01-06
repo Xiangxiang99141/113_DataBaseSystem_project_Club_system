@@ -17,13 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      Ins_id: {
-        type: Sequelize.INTEGER,
-        references:{
-          model:'Insurances',
-          key:"Ins_id"
-        }
-      },
     },{
       comment: '保險正反面', //資料表備註
     }
