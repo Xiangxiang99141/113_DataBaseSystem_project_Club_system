@@ -206,7 +206,6 @@ exports.getSignupMembers = async (req, res) => {
         });
     }
 }
-
 exports.addClub_member = (req,res) => {
     const {userId,clubId,permission} = req.body
 
@@ -221,6 +220,40 @@ exports.addClub_member = (req,res) => {
     catch(e=>{
         res.send(e);
     });
+}
+//審核通過
+exports.applySignup = (req,res) => {
+    try {
+        Club_sign_record.update({
+            is_verify:true
+        },{
+            where: {
+                id:req.params.Sid,
+                C_id: req.params.id,
+                }
+            }).then(result=>{
+            res.json({
+                success: true,
+                message: '報名已通過成功',
+                data: result
+            });
+        }).catch(error=>{
+            res.json({
+                success: false,
+                message: '審核失敗',
+                data: error
+            });
+        });
+
+        
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '查詢失敗'
+        });
+    }
 }
 
 
