@@ -107,7 +107,7 @@ router.post('/club/:id/signUp',  clubController.signupClub);
 
 //查看社團報名列表
 router.get('/club/:id/signUpMember', clubController.getSignupMembers);
-router.get('/club/:id/signupApply/:Sid',clubController.applySignup)
+router.get('/club/:id/signupApply/:Mid',clubController.applySignup)
 //社團成員
 //查詢
 router.get('/club/:id/members',clubController.getClubMembers);
