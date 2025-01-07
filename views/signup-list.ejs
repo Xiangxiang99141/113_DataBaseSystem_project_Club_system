@@ -51,8 +51,8 @@
                         <td><%= new Date(signup.signup_at).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) %></td>
                         <td><%= signup.signup_cause %></td>
                         <td>
-                            <span class="badge <%= signup.isVerify ? 'bg-success' : 'bg-warning' %>">
-                                <%= signup.isVerify ? '已審核' : '待審核' %>
+                            <span class="badge <%= signup.is_verify ? 'bg-success' : 'bg-warning' %>">
+                                <%= signup.is_verify ? '已審核' : '待審核' %>
                             </span>
                         </td>
                         <td>
