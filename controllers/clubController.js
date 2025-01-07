@@ -368,7 +368,7 @@ exports.getInfo = async (req,res) => {
 
         //獲取社團活動
         const {count:activity_count,rows:activity_rows} = await Club_activity.findAndCountAll({
-            attributed:['Ca_id','Ca_name','Ca_content','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
+            attributes:['Ca_id','Ca_name','Ca_content','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
             where:{
                 C_id:req.params.id
             },
@@ -378,7 +378,7 @@ exports.getInfo = async (req,res) => {
         
         //獲取社團課程
         const {count:course_count,rows:course_rows} = await Club_course.findAndCountAll({
-            attributed:['Cc_id','Cc_name','Cc_content','Cc_location','Cc_date','Cc_quota','Cc_open_at','Cc_close_at'],
+            attributes:['Cc_id','Cc_name','Cc_content','Cc_location','Cc_date','Cc_quota','Cc_open_at','Cc_close_at'],
             where:{
                 C_id:req.params.id
             },
@@ -450,10 +450,10 @@ exports.getActivitiesListView = async (req,res)=>{
         }
         let clubs = await getClubs();
         Club_activity.findAll({
-            attributed:['Ca_id','Ca_name','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
+            attributes:['Ca_id','Ca_name','Ca_location','Ca_date','Ca_quota','Ca_open_at','Ca_close_at'],
             include:[{
                 model:Club,
-                attributed:['C_id','C_name']
+                attributes:['C_id','C_name']
             }],
             nest:true,
             raw:true
@@ -502,7 +502,7 @@ exports.getCoursesListView = async (req,res) =>{
         }
         let clubs = await getClubs();
         Club_course.findAll({
-            attributed:[
+            attributes:[
                 'Cc_id',
                 'Cc_name',
                 'Cc_location',
@@ -512,7 +512,10 @@ exports.getCoursesListView = async (req,res) =>{
                 'Cc_close_at'],
             include:[{
                 model:Club,
-                attributed:['C_id','C_name']
+                attributes:['C_id','C_name']
+            },{
+                model:Signup_record,
+                attributes:['su_id']
             }],
             nest:true,
             raw:true
@@ -525,8 +528,10 @@ exports.getCoursesListView = async (req,res) =>{
                     Cc_quota:row.Cc_quota,
                     Cc_status:isStrat(
                         row.Cc_open_at,
-                        row.Cc_close_at
+                        row.Cc_close_at,
+                        row.Cc_date
                     ),
+                    is_signup:(row.Signup_record.su_id!=null)?true:false,
                     C_name:row.Club.C_name,
                     C_id:row.Club.C_id
             }));
@@ -562,7 +567,7 @@ exports.getActivitySignupView = async (req,res)=>{
     if(req.query.CId && req.query.CAId){
         try{
             Club_activity.findOne({
-                attributed:[
+                attributes:[
                     'Ca_id',
                     'Ca_content',
                     'Ca_id',
@@ -610,7 +615,7 @@ exports.getCourseSignupView = async (req,res)=>{
     if(req.query.CId && req.query.CCId){
         try{
             Club_course.findOne({
-                attributed:[
+                attributes:[
                     'Cc_id',
                     'Cc_id',
                     'Cc_content',
@@ -627,6 +632,7 @@ exports.getCourseSignupView = async (req,res)=>{
                 nest:true,
                 raw:true
             }).then((course)=>{
+                
                 res.status(200).render('course_signup',{
                     isLogin:is_login,
                     course:course
@@ -647,7 +653,7 @@ exports.getCourseSignupView = async (req,res)=>{
 exports.getClub = async (req,res) => {
     try{
         const club = await Club.findByPk(req.params.id,{
-            attributed:['C_name','C_type','C_intro','C_web','C_quota'],
+            attributes:['C_name','C_type','C_intro','C_web','C_quota'],
             nest:true,
             raw:true
         });
@@ -1290,7 +1296,7 @@ async function getClubMember(clubId=null){
 
 async function getClubs(){
     const clubs = Club.findAll({
-        attributed:['C_id','C_name','C_type'],
+        attributes:['C_id','C_name','C_type'],
         nest:true,
         raw:true
     })
