@@ -1,5 +1,9 @@
 // 獲取成員列表
 function getmemberlist(){
+    let select = document.getElementById('userSelect');
+    for(i=0;i<=select.options.length;i++){
+        select.remove(i);
+    };
     fetch('/api/members',{
         method:'GET',
         headers:{
