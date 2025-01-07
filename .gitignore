@@ -8,7 +8,12 @@ CLI.txt
 
 models/indexModel.js
 
-public/uploads/*
+public/uploads/activities
+public/uploads/activity/*
+public/uploads/announcement/*
+public/uploads/equipments/*
+public/uploads/histories/*
+public/uploads/misc/*
 
 models/indexModel.js
 
