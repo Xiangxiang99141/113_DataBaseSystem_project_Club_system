@@ -41,8 +41,11 @@ router.get('/meetings', isAuthenticated,
     // }}
 );
 // router.post('/meeting',ClubController.createMeeting);
-
+//器材頁面
 router.get('/equipment',isAuthenticated,ManageController.getEquipmentsView);
+
+//歷史資料頁面
+router.get('/history',isAuthenticated,ManageController.getHistoriesView);
 
 //顯示報名列表
 router.get('/signup', isAuthenticated, ManageController.getSignupView);
