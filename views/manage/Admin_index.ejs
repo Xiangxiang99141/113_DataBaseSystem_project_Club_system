@@ -131,7 +131,18 @@
                     <i class="bi bi-gear fs-1 mb-3"></i>
                     <h5 class="card-title">報名列表</h5>
                     <p class="card-text">查看報名社團列表</p>
-                    <a href="/manage/signup?id=<%= club.C_id %>" class="btn btn-primary">進入設定</a>
+                    <a href="/manage/signup?id=<%= club.C_id %>" class="btn btn-primary">進入管理</a>
+                </div>
+            </div>
+        </div>
+        <!-- 參與列表卡片 -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear fs-1 mb-3"></i>
+                    <h5 class="card-title">社課活動參與列表</h5>
+                    <p class="card-text">查看社課活動參與</p>
+                    <a href="/manage/records?id=<%= club.C_id %>" class="btn btn-primary">進入管理</a>
                 </div>
             </div>
         </div>
