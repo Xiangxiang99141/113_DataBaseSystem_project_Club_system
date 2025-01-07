@@ -346,7 +346,7 @@ exports.getSignupView = async (req,res)=>{
         const signup_list = await Club_sign_record.findAll({
             include:[{
                 model:Member,
-                attribes:['M_name']
+                attribes:['M_name','M_id']
             }],
             where:{
                 C_id:req.query.id
