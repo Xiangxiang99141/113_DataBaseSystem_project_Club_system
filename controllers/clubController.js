@@ -228,15 +228,23 @@ exports.applySignup = (req,res) => {
             is_verify:true
         },{
             where: {
-                id:req.params.Sid,
+                M_id:req.params.Mid,
                 C_id: req.params.id,
                 }
-            }).then(result=>{
-            res.json({
-                success: true,
-                message: '報名已通過成功',
-                data: result
-            });
+        }).then(result=>{
+            console.log(result)
+            Club_member.create({
+                C_id:req.params.id,
+                M_id:req.params.Mid,
+                Cme_job:'社員',
+                Cme_member_join_at:new Date()
+            }).then(
+                res.json({
+                    success: true,
+                    message: '報名已通過成功',
+                    data: result
+                })
+            );
         }).catch(error=>{
             res.json({
                 success: false,
