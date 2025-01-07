@@ -401,6 +401,37 @@ exports.getMeetingsView = async (req,res) =>{
     }
 
 }
+
+
+exports.getHistoriesView = async (req,res)=> {
+    user = await verification(req.cookies[COOKIE_NAME]);
+    if(req.query.id){
+        try{
+            HasPermissions(user.userId,req.query.id).
+            then((isAdmin)=>{
+                if(isAdmin){
+                    getHistory(req.query.id).
+                        then((histories)=>{
+                            res.render('histories/index',{
+                                clubId:req.query.id,
+                                histories:histories,
+                                success:null,
+                                error:null
+                            });
+                        });
+                }else{
+                    res.render('error',{
+                        message:"權限不足"
+                    });
+                }
+            });
+        }catch(e){
+            res.send(e);
+        }
+    }else{
+        //驗證是否為系統管理員
+    }
+}
 //檢查是否有這個社團的編輯權限
 async function HasPermissions(userId,clubId){
     const member = await Club_member.findOne({
@@ -589,6 +620,9 @@ async function getmeetings(clubId=null){
                     model:Member,
                     attributes:['M_name']
                 }],
+                where:{
+                    C_id:clubId
+                },
                 nest:true,
                 raw:true
             });
@@ -611,3 +645,42 @@ async function getmeetings(clubId=null){
         console.log(`Get Error : '${e}'`);
     }
 };
+
+async function getHistory(clubId=null) {
+    let histories;
+    try{ 
+        if(clubId!=null){
+            histories = await Club_history.findAll({
+                attributes:[
+                    'Ch_id', 
+                    'Ch_type',
+                    'Ch_name',
+                    'Ch_description',
+                    'Ch_update_at',
+                    'Ch_attachment'
+                ],
+                where:{
+                    C_id:clubId
+                },
+                nest:true,
+                raw:true
+            });
+        }else{
+            histories = await Club_history.findAll({
+                attributes:[
+                    'Ch_id', 
+                    'Ch_type',
+                    'Ch_name',
+                    'Ch_description',
+                    'Ch_update_at',
+                    'Ch_attachment'
+                ],
+                nest:true,
+                raw:true
+            });
+        }
+        return histories;
+    }catch(e){
+        console.log(`Get Error : '${e}'`);
+    }
+}
