@@ -16,6 +16,7 @@ function showEquipmentDetails(id, clubId) {
             document.getElementById('detailReport').textContent = equipment.Member.M_name;
             document.getElementById('detailUse').textContent = equipment.Ce_use;
             if(equipment.Ce_img != null){
+                document.getElementById('detailImage').style.display = 'block';
                 document.getElementById('detailImage').src = equipment.Ce_img;
             }else{
                 document.getElementById('detailImage').style.display = 'none';
