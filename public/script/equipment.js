@@ -15,7 +15,11 @@ function showEquipmentDetails(id, clubId) {
             document.getElementById('detailAdmin').textContent = equipment.Member.M_name
             document.getElementById('detailReport').textContent = equipment.Member.M_name;
             document.getElementById('detailUse').textContent = equipment.Ce_use;
-            document.getElementById('detailImage').src = equipment.Ce_img;
+            if(equipment.Ce_img != null){
+                document.getElementById('detailImage').src = equipment.Ce_img;
+            }else{
+                document.getElementById('detailImage').style.display = 'none';
+            }
         });
         
         new bootstrap.Modal(document.getElementById('equipmentDetailsModal')).show();   
