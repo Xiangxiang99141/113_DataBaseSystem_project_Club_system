@@ -57,7 +57,7 @@
                         </td>
                         <td>
                             <% if (!signup.is_verify) { %>
-                            <button class="btn btn-sm btn-success" onclick="verifySignup('<%= signup.id %>', '<%= signup.C_id %>')">
+                            <button class="btn btn-sm btn-success" onclick="verifySignup('<%= signup.Member.M_id %>', '<%= signup.C_id %>')">
                                 通過
                             </button>
                             
@@ -71,9 +71,9 @@
     </div>
 
     <script>
-        async function verifySignup(signupId, clubId) {
+        async function verifySignup(memberId, clubId) {
             try {
-                const response = await fetch(`/api/club/${clubId}/signupApply/${signupId}`, {
+                const response = await fetch(`/api/club/${clubId}/signupApply/${memberId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
