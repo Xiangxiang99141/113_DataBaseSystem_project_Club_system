@@ -1,7 +1,7 @@
 // 獲取成員列表
 function getmemberlist(){
-    let select = document.getElementById('userSelect');
-    for(i=0;i<=select.options.length;i++){
+    const select = document.getElementById('userSelect');
+    for(i=0;i<select.options.length+1;i++){
         select.remove(i);
     };
     fetch('/api/members',{
@@ -12,7 +12,6 @@ function getmemberlist(){
     }).then(response=>{
         if(response.ok){
             response.json().then(data=>{
-                const select = document.getElementById('userSelect');
                 data.data.forEach(member => {
                     option = document.createElement('option');
                     option.value = member.M_id;
