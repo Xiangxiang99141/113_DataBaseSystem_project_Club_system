@@ -56,13 +56,11 @@
                             </span>
                         </td>
                         <td>
-                            <% if (!signup.isVerify) { %>
-                            <button class="btn btn-sm btn-success" onclick="verifySignup('<%= signup.id %>', true)">
+                            <% if (!signup.is_verify) { %>
+                            <button class="btn btn-sm btn-success" onclick="verifySignup('<%= signup.id %>', '<%= signup.C_id %>')">
                                 通過
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="verifySignup('<%= signup.id %>', false)">
-                                拒絕
-                            </button>
+                            
                             <% } %>
                         </td>
                     </tr>
@@ -73,16 +71,13 @@
     </div>
 
     <script>
-        async function verifySignup(signupId, isApproved) {
+        async function verifySignup(signupId, clubId) {
             try {
-                const response = await fetch(`/api/signup/${signupId}/verify`, {
-                    method: 'POST',
+                const response = await fetch(`/api/club/${clubId}/signupApply/${signupId}`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        isApproved: isApproved
-                    })
                 });
 
                 const data = await response.json();
@@ -101,6 +96,5 @@
     </script>
 
     <%- include('layouts/footer') %>
-    <script src="./js/script.js"></script>
 </body>
 </html>
