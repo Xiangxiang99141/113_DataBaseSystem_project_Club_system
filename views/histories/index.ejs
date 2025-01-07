@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社團管理系統</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</head>
+
+<%- include('../layouts/header') %>
+
+<div class="container mt-4">
+    <h2 class="mb-4">歷史資料管理</h2>
+
+    <!-- 篩選區域 -->
+    <div class="row mb-3 justify-content-between">
+        <div class="col-md-4">
+            <select id="typeFilter" class="form-control">
+                <option value="">全部類型</option>
+                <option value="組織章程">組織章程</option>
+                <option value="器材規章">器材規章</option>
+                <option value="財務規章">財務規章</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-center align-items-center">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addHistoricalDataModal">
+                新增資料
+            </button>
+        </div>
+    </div>
+
+    <!-- 資料表格 -->
+    <table class="table table-striped" id="historicalDataTable">
+        <thead>
+            <tr>
+                <th>類型</th>
+                <th>資料名稱</th>
+                <th>描述</th>
+                <th>更新日期</th>
+                <th>附件</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% histories.forEach((history) => { %>
+            <tr>
+                <td><%= history.Ch_type %></td>
+                <td><%= history.Ch_name %></td>
+                <td><%= history.Ch_description %></td>
+                <td><%= history.Ch_update_at %></td>
+                <td>
+                    <a href="<%= history.Ch_attachment %>" target="_blank">查看附件</a>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info edit-btn" disabled>編輯</button>
+                    <button class="btn btn-sm btn-danger delete-btn" disabled>刪除</button>
+                </td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- 新增資料 Modal -->
+    <div class="modal fade" id="addHistoricalDataModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增歷史資料</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="historicalDataForm">
+                        <div class="form-group">
+                            <label>類型</label>
+                            <select name="type" class="form-control" required>
+                                <option value="">選擇類型</option>
+                                <option value="組織章程">組織章程</option>
+                                <option value="器材規章">器材規章</option>
+                                <option value="財務規章">財務規章</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>資料名稱</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>資料描述</label>
+                            <textarea name="description" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>更新日期</label>
+                            <input type="date" name="date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>附件</label>
+                            <input type="file" name="attachment" class="form-control-file" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="addHistory('<%= clubId %>')">儲存</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/history.js"></script>
+
+<%- include('../layouts/footer') %>
