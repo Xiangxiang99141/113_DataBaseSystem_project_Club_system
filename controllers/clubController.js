@@ -1150,7 +1150,7 @@ exports.addActivity = async (req, res) => {
             Ca_close_at:new Date(req.body.close),
             insurance:req.body.insurance,
             transportation:req.body.transportation,
-            Ca_plan:req.file ? `/uploads/activityplan/${req.file.filename}` : null,
+            Ca_plan:req.file ? `/uploads/activity/${req.file.filename}` : null,
             C_id:req.params.id
         });
         res.json({
