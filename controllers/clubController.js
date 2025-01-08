@@ -27,11 +27,18 @@ const verification = require('../util/verification');
 exports.getClubs = async (req, res) => {
     try {
         const clubs = await Club.findAll();
-        res.status(200).json({ 
-            success: true, 
-            message: '社團獲取成功',
-            clubs: clubs 
-        });
+        if(req.query.noInfo){
+            console.log('進來了')
+            res.status(200).json({
+                clubs 
+            });
+        }else{
+            res.status(200).json({ 
+                success: true, 
+                message: '社團獲取成功',
+                clubs: clubs 
+            });
+        }
 
     } catch (error) {
         console.error('Error:', error);
