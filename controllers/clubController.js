@@ -29,9 +29,7 @@ exports.getClubs = async (req, res) => {
         const clubs = await Club.findAll();
         if(req.query.noInfo){
             console.log('進來了')
-            res.status(200).json({
-                clubs 
-            });
+            res.status(200).json(clubs);
         }else{
             res.status(200).json({ 
                 success: true, 
