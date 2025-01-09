@@ -117,6 +117,7 @@ router.post('/club/:id/member',clubController.addClubMember);
 
 // 活動相關 API
 router.get('/club/:id/activities', clubController.getClubActivity);
+router.get('/club/activities', clubController.getClubActivitNoInfo);
 router.post('/club/:id/activity', upload.single('plan'),clubController.addActivity);
 //報名活動
 router.post('/club/:id/activity/signup/:AId',clubController.signupActivity);
