@@ -13,7 +13,7 @@ const indexRouter = require('./routes/indexRouter');
 const memberRouter = require('./routes/memberRouter')
 const clubRouter = require('./routes/clubRouter');
 const manageRouter = require('./routes/manageRouter');
-const apiRouter = require('./routes/ApiRouter');
+const apiRouter = require('./routes/apiRouter');
 
 /*設定 view engine 為 ejs*/
 app.set('view engine', 'ejs');
