@@ -22,13 +22,13 @@ const e = require('connect-flash');
 const moment = require('moment');
 const COOKIE_NAME = 'auth_token';
 const verification = require('../util/verification');
+const { param } = require('jquery');
 
 // 獲取所有社團
 exports.getClubs = async (req, res) => {
     try {
         const clubs = await Club.findAll();
         if(req.query.noInfo){
-            console.log('進來了')
             res.status(200).json(clubs);
         }else{
             res.status(200).json({ 
@@ -777,22 +777,58 @@ exports.addClubMember = async (req,res)=>{
         });
     }
 }
+
+exports.getClubActivitNoInfo = async (req,res)=>{
+    try {
+        Club_activity.findAll({
+            include:[{
+                model:Club,
+                attributes:['C_name']
+            }]
+        }).then((activities)=>{
+            console.log(646)
+            res.json(
+                activities
+            );
+        }).catch(e=>{
+            console.log(e)
+        })
+        
+        
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '獲取活動失敗'
+        });
+    }
+}
+
 //獲取社團活動
 exports.getClubActivity = async (req, res) => {
     try {
-        const activities = await Club_activity.findAll({
+        let activities;
+        activities = await Club_activity.findAll({
             where: { C_id: req.params.id },
             include:[{
                 model:Club,
                 attributes:['C_name']
             }]
         });
+        
 
-        res.json({
-            success: true,
-            message: '活動獲取成功',
-            data: activities
-        });
+        if(req.query.noInfo){
+            res.json(
+                activities
+            );
+        }else{
+            res.json({
+                success: true,
+                message: '活動獲取成功',
+                data: activities
+            });
+        }
 
     } catch (error) {
         console.error('Error:', error);
