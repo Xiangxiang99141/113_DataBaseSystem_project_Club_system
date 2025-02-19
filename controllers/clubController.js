@@ -778,14 +778,17 @@ exports.addClubMember = async (req,res)=>{
     }
 }
 
-exports.getClubActivitNoInfo = async (req,res)=>{
+exports.getClubActivityNoInfo = async (req,res)=>{
+    console.log("eeee")
     try {
-        Club_activity.findAll({
-            include:[{
-                model:Club,
-                attributes:['C_name']
-            }]
-        }).then((activities)=>{
+        Club_activity.findAll(
+        //     {
+        //     include:[{
+        //         model:Club,
+        //         attributes:['C_name']
+        //     }]
+        // }
+    ).then((activities)=>{
             console.log(646)
             res.json(
                 activities
